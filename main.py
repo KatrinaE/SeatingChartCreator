@@ -11,7 +11,7 @@ def seating(people_csv, tables_csv):
     days_list, \
     fieldnames = import_all(people_csv, tables_csv)
 
-    persons_master = make_person_objects(people_list, days_list)
+    people_master = make_person_objects(people_list, days_list)
 
     tables_master, \
     groupings_master = make_table_and_grouping_objects(tables_list)

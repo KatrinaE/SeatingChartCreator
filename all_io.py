@@ -75,7 +75,6 @@ def import_people(csv_file_name):
     if "iid" in fieldnames:
         raise Exception("The name iid is reserved for internal use."
                         "Please choose a different name for this field.")
-
     if len(set(fieldnames)) != len(fieldnames):
         raise Exception("One or more fields have the same name. Please"
                         "choose a unique name for each field.")
@@ -165,8 +164,10 @@ def import_all(people_csv_name, tables_csv_name):
 def export_people(people_output, fieldnames):
     """
     export_people writes a csv file in which each person has his/her
-    own row. The file's fieldnames are the same as the ones
-    imported during import_people, but with 'iid' added.
+    own row.
+
+    The file's fieldnames are the same as the ones
+    imported via import_people, but with 'iid' added.
     e.g. [iid, Category, Last Name, First Name, Mon, Tues, Wed, Thurs, Fri]
 
     A table name is written in the field for each person/day combination.
@@ -178,6 +179,9 @@ def export_tables(table_output, fieldnames):
     """
     export_tables writes a csv file in which each table has its own row.
 
+    The file's fieldnames are the same as the ones
+    imported via import_tables, e.g.
+    [Table Name, Mon, Tues, Wed, Thurs, Fri]
     A list of people (e.g. '"Martin Wallace", "Lucy Smith"') is written
     in the field for each table/day combination.
     """

@@ -112,5 +112,6 @@ def get_grouping(name, day, groupings_master):
             return table[day]
         except KeyError:
             print "There is no grouping for " + str(name) + " on " + str(day)
+
     except KeyError:
         print "There is no table named " + str(name) + " in the given groupings_master dict."

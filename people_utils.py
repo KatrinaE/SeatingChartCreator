@@ -26,7 +26,7 @@ class Person(object):
         
 
 def make_person_objects(raw_person_list, days):
-    persons_master = {}
+    people_master = {}
     new_id = 1
     for person in raw_person_list:
         p_object = Person(person, new_id)
@@ -36,9 +36,9 @@ def make_person_objects(raw_person_list, days):
                 attribute_name = "p_object." + str(day) + " = " + str(person[day])
                 exec attribute_name
         
-        persons_master[new_id] = p_object
+        people_master[new_id] = p_object
         new_id += 1
-    return persons_master
+    return people_master
 
        
 def not_head(group,day):
