@@ -1,0 +1,22 @@
+Next step: make test_camper_utils.py
+
+I am thinking about how to store tables, groups, and campers so
+I can easily access them and so I can keep track of which ones have
+been used or not.
+
+Right now I have tables_master, a dictionary which keeps track of
+what tables exist (format: { '2' : <table-object>, 'Head' : <table-object> etc. })
+
+I think that this concept could be useful for keeping master lists of campers
+(master dict of campers by id) and groupings (master list of groupings by
+table name & date? Or maybe a dict of dicts?)
+
+It could also be useful for keeping track of campers/tables/groupings on
+a day-by-day basis. You could have dicts like Monday-tables, Monday-campers,
+etc. that only contain tables/campers/groupings (?) not yet assigned.
+If you have to de-assign a camper/group b/c it's not optimal, you
+put it back into that dict. All of the dicts always exist (maybe they're
+stored in a master dict?) so you always have some sort of record of
+state on that day. You might want to do more with that, though. I guess
+that between those dicts and your output data structure you have a full
+record of state at each point.
