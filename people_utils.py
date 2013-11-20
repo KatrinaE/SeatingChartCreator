@@ -26,6 +26,11 @@ class Person(object):
         
 
 def make_person_objects(raw_person_list, days):
+    """
+    Returns a dict of the form
+    { 1 : <Person object> ; 2 : <Person object> }
+    The IDs are auto-assigned.
+    """
     people_master = {}
     new_id = 1
     for person in raw_person_list:

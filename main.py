@@ -1,5 +1,5 @@
 import sys
-from all_io import import_all, create_output_file
+from all_io import import_all, export_tables
 from people_utils import make_person_objects
 from table_utils import make_table_and_grouping_objects
 
@@ -15,9 +15,8 @@ def seating(people_csv, tables_csv):
 
     tables_master, \
     groupings_master = make_table_and_grouping_objects(tables_list)
+    import pdb; pdb.set_trace()
 
-
-
-    create_output_file( , fieldnames)
+    #export_tables( , fieldnames)
 if __name__ == '__main__':
     seating(sys.argv[1], sys.argv[2])

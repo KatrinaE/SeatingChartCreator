@@ -7,6 +7,23 @@ from ..all_io import import_people, add_person_ids, \
     make_categories_list, import_tables
 
 
+class allIOTestCase(unittest.TestCase):
+    #noinspection PyPep8Naming
+    def setUp(self):
+        pass
+
+    #noinspection PyPep8Naming
+    def tearDown(self):
+        pass
+
+    def test_import_all(self):
+        #TODO
+        pass
+
+    def test_export_tables(self):
+        #TODO
+        pass
+
 class PeopleTestCase(unittest.TestCase):
     #noinspection PyPep8Naming
     def setUp(self):

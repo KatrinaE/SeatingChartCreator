@@ -1,3 +1,45 @@
+# 3: Feature Request: Table capacities should be flexible
+======================
+You should be able to specify a min/max capacity, as well as an optimal 
+capacity, for a table (or a specific grouping). For example, you should
+be able to tell the program, "Table 4 seats 9-12 people, and it's in a 
+prime location so I'd like to get all 12 seats filled."
+
+# 2: Tables should be allowed to have a 'capacity' without 'days'
+=======================
+Actually, I guess you could already do this (there would just be 1 day
+named 'Capacity'). Need to make this compatible with import_people (b/c
+the people import won't have a day named 'Capacity').
+
+# 1: Write Output Files
+=======================
+Enable writing output files using export_people and possibly export_tables.
+This will require:
+- Updating the data structures for people and/or tables so output data is 
+stored in dicts for csv.DictWriter to write
+- writing the export_people and export_tables functions
+- 
+
+
+# Testing Situations
+===========================
+Testing with a variety of input documents:
+	- no categories, 1 day: no days or categories in people file, no 
+	  days in tables file (simplest case - just a list of people and 
+	  a list of tables)
+	- categories, 1 day
+	- no categories, multiple days
+	- categories, multiple days
+	  	      ** sure there are subcases here **
+	  - various field name combos ('First Name' and 'Last Name', 'Name' 
+	    only, etc.)
+	  - 1 day, more people than seats
+
+Bad Files
+---------
+	- @ least 1 reqd field missing from ppl
+	- @ least 1 reqd field missing from tables
+
 Next step: make test_camper_utils.py
 
 I am thinking about how to store tables, groups, and campers so
