@@ -3,7 +3,31 @@ import pdb
 import itertools
 
 from table_utils import Table, Grouping
-# PEOPLE INPUT
+
+
+# IMPORT EVERYTHING
+# =================
+
+def import_all(people_csv_name, tables_csv_name):
+    raw_people_list, people_days_list, fieldnames = \
+        import_people(people_csv_name)
+    people_list = add_person_ids(raw_people_list)
+    categories_list = make_categories_list(people_list)
+
+
+    tables_list, table_days_list = import_tables(tables_csv_name)
+
+    if set(people_days_list) != set(table_days_list):
+        raise Exception("The days in the tables csv file: " +
+                         str(people_days_list) +
+                         " are different from the ones in the people "
+                         "csv file: " + str(table_days_list))
+
+    return (people_list, categories_list, tables_list, table_days_list,
+            fieldnames)
+
+
+# IMPORT PEOPLE
 # =============
 #
 # Also creates a list of days, e.g. ["Monday", "Tuesday"]
@@ -135,26 +159,7 @@ def import_tables(csv_file_name):
     return tables, days
 
 
-# IMPORT EVERYTHING
-# =================
 
-def import_all(people_csv_name, tables_csv_name):
-    raw_people_list, people_days_list, fieldnames = \
-        import_people(people_csv_name)
-    people_list = add_person_ids(raw_people_list)
-    categories_list = make_categories_list(people_list)
-
-
-    tables_list, table_days_list = import_tables(tables_csv_name)
-
-    if set(people_days_list) != set(table_days_list):
-        raise Exception("The days in the tables csv file: " +
-                         str(people_days_list) +
-                         " are different from the ones in the people "
-                         "csv file: " + str(table_days_list))
-
-    return (people_list, categories_list, tables_list, table_days_list,
-            fieldnames)
 
 
 # EXPORT EVERYTHING

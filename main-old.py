@@ -175,11 +175,11 @@ def assignAllCampers(allCampers,day,dayTables):
     nursing = []
 
     for camper in allCampers:
-        if camper['Discipline'] == 'Health Administration ':
+        if camper['Category'] == 'Health Administration ':
             ha.append(camper)
-        elif camper['Discipline'] == 'Medicine':
+        elif camper['Category'] == 'Medicine':
             medicine.append(camper)
-        elif camper['Discipline'] == 'Nursing':
+        elif camper['Category'] == 'Nursing':
             nursing.append(camper)
 
     (docs, outTables) = assignCampers(medicine,day,dayTables,1,4)
