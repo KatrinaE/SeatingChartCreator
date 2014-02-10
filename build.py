@@ -90,7 +90,7 @@ def populate_head_table(tables, people, all_days):
             # Hack alert! this assumes that the head table is '1'
             # because this is how Jane entered it in her spreadsheet
             if p[d] == '1':
-                head_table[d]['people'].append((p['id'], p['Category']))
+                add_person_to_seatee_list(head_table, p, d)
     # How come I have to explicitly return tables here?
     return tables
 
