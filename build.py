@@ -35,22 +35,19 @@ def cat_not_full(tables, d, cat):
     else:
         return open_tables
 
-def get_ids_at_table(t):
-    return [ x[0] for x in t['people'] ]
-
 def get_previous_seatmates(person, tables, days):
     seatmates = []
     for table_name, table in tables.iteritems():
         for d in days:
-            ids_at_table = get_ids_at_table(table[d])
-            if person['id'] in ids_at_table:
-                seatmates.extend(ids_at_table)
+            people_at_table = table[d]['people']
+            if person in people_at_table:
+                seatmates.extend(people_at_table)
     return seatmates
 
 def table_with_fewest_previous_seatmates(open_tables, previous_seatmates, d):
     h = []
     for table_name, table in open_tables.iteritems():
-        people_at_t = [x[0] for x in table[d]['people']]
+        people_at_t = table[d]['people']
         intersection = set(people_at_t) & set(previous_seatmates)
         num_prev_seatmates = len(intersection)
         h.append((num_prev_seatmates, table_name))
@@ -59,9 +56,10 @@ def table_with_fewest_previous_seatmates(open_tables, previous_seatmates, d):
 
 def best_table(person, tables, day, all_days):
     cat = person['Category']
+    person_tup = (person['id'], cat)
     open_tables = not_full(tables, day)
     open_tables = cat_not_full(open_tables, day, cat)
-    previous_seatmates = get_previous_seatmates(person, tables, all_days)
+    previous_seatmates = get_previous_seatmates(person_tup, tables, all_days)
     table_name = table_with_fewest_previous_seatmates(open_tables, previous_seatmates, day)
     return table_name
 
