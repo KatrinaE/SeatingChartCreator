@@ -15,13 +15,12 @@ def not_full(tables, d):
 
 def max_for_cat(cat):
     # Hack Alert! Hard-coded
-    if cat == 'Health Administration':
-        max_num = 2
-    elif cat == 'Nursing':
-        max_num = 3
-    elif cat == 'Medicine' or cat == 'Other':
-        max_num = 4
-    return max_num
+    maxima = {'Health Administration' : 2,
+              'Nursing' : 3,
+              'Medicine' : 4,
+              'Other' : 4,
+             }
+    return maxima[cat]
 
 def cat_not_full(tables, d, cat):
     max_num = max_for_cat(cat)        
