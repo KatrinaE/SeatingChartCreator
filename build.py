@@ -88,14 +88,12 @@ def populate_head_table(tables, people, all_days):
     return tables
 
 def build_solution(people, tables, all_days):
-    people_out = deepcopy(people)
-    tables_out = deepcopy(tables)
-    tables_out = populate_head_table(tables_out, people_out, all_days)
+    tables = populate_head_table(tables, people, all_days)
     for d in all_days:
-        random.shuffle(people_out)
-        people_out, tables_out = seat_campers(people_out, tables_out, d, all_days)
+        random.shuffle(people)
+        people, tables = seat_campers(people, tables, d, all_days)
 
-    return people_out, tables_out
+    return people, tables
 
 
 
