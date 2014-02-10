@@ -20,14 +20,16 @@ def people_dicts(filename):
     return add_IDs(people)
 
 
-def make_room_for_people(tables):
+def initialize_seatee_lists(tables):
     for t in tables:
         for (key, value) in t.iteritems():
             if key != 'Table Name':
                 opt_value = t[key]
                 t[key] = {}
                 t[key]['opt'] = opt_value
-                t[key]['ppl'] = []
+                t[key]['people'] = []
+    return tables
+
 
 def table_dicts(filename):
     '''
@@ -36,9 +38,7 @@ def table_dicts(filename):
     '''
     reader = csv.DictReader(open(filename,"rwU"))
     tables = [row for row in reader]
-    make_room_for_people(tables)
-    return tables
-
+    return initialize_seatee_lists(tables)
 
 
 def days_list(filename):
@@ -46,6 +46,7 @@ def days_list(filename):
     header = reader.next()
     days_list = [day for day in header if day != 'Table Name']
     return days_list
+
 
 def write_to_csv(people, filename):
     fieldnames = ['id','Category', 'Last Name', 'First Name', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']

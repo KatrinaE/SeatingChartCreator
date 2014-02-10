@@ -1,6 +1,9 @@
 # Official recommended gitignore for Python projects
 # from https://github.com/github/gitignore/blob/master/Python.gitignore
 
+*#*
+.DS_Store
+
 *.py[cod]
 
 # C extensions

@@ -37,14 +37,14 @@ def cf_location(people):
     return cost
 
 def get_id_lists(tables):
-    """ Returns list of ids of ppl sitting at a set of tables, e.g. 
+    """ Returns list of ids of people sitting at a set of tables, e.g. 
     [[1,2,3], [4,5,6]] """
     ids_by_table = []
     for t in tables:
         t_by_day = [ day_info for (day, day_info) in t.iteritems() \
                      if day != 'Table Name']
         for day in t_by_day:
-            ids_at_t = [ x[0] for x in day['ppl'] ]
+            ids_at_t = [ x[0] for x in day['people'] ]
             ids_by_table.append(ids_at_t)
     return ids_by_table
 
@@ -88,7 +88,7 @@ def cf_quads(tables):
     return cost_of_times_together(tables, 4)
 
 def diff_from_opt_size(table):
-    return len(table['ppl']) - int(table['opt'])
+    return len(table['people']) - int(table['opt'])
 
 def update_max(maximum, new_item):
     if new_item  > maximum:
@@ -117,8 +117,8 @@ def imbalance_by_category(table, optimal_sizes):
     desired people in that category (e.g. 3). Returns a list of integers
     relating the distance from optimal for each category, e.g. [1, 2, 3]
     """
-    tally_num_ppl_in_each_cat = [ x[1] for x in table['ppl'] ]
-    summed_tally = Counter(tally_num_ppl_in_each_cat)
+    tally_num_people_in_each_cat = [ x[1] for x in table['people'] ]
+    summed_tally = Counter(tally_num_people_in_each_cat)
         
     distance_list = []
     for category in optimal_sizes:
