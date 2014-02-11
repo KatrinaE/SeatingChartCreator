@@ -28,19 +28,28 @@ def initialize_seatee_lists(tables):
             table[day]['people'] = []
     return tables
 
+class Table(object):
+    def __init__(self, name, day, capacity):
+        self.name = name
+        self.day = day
+        self.capacity = capacity
+        self.people = []
 
-def table_dicts(filename):
+def table_objects(filename):
     '''
-    Creates a list of dictionaries, where each dict represents 1 table
-    Format: { Table Name: Table-one, Mon: 8, Tue: 8, Wed: 7 }
+    Creates a list of objects, 1 for each table
     '''
     reader = csv.DictReader(open(filename,"rwU"))
     temp_tables = [row for row in reader]
-    tables = {}
+    days = days_list(filename)
+    tables = []
     for table in temp_tables:
-        tables[table["Table Name"]] = table
-        del table["Table Name"]
-    return initialize_seatee_lists(tables)
+        name = table['Table Name']
+        for day in days:
+            capacity = table[day]
+            table_object = Table(name, day, capacity)
+            tables.append(table_object)
+    return tables
 
 
 def days_list(filename):
