@@ -83,23 +83,21 @@ def seat_person_at_table(table, person):
 
 def populate_head_table(tables, people):
     all_head_tables = (t for t in tables if t.name == "Head")
-    tables_out = []
     for head_table in all_head_tables:
         day = head_table.day
         for person in people:
             # Hack Alert! Hard-coded
             if person[day] == '1':
                 head_table = seat_person_at_table(head_table, person)
-        tables_out.append(head_table)
-    return tables_out
+    return tables
 
 def build_solution(people, tables, all_days):
-    tables = populate_head_table(tables, people)
+    tables_out = populate_head_table(tables, people)
     for d in all_days:
         random.shuffle(people)
-        people, tables = seat_campers(people, tables, d)
+        people, tables_out = seat_campers(people, tables_out, d)
 
-    return people, tables
+    return people, tables_out
 
 
 

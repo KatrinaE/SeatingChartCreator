@@ -1,75 +1,75 @@
 id,Category,Last Name,First Name,Mon,Tue,Wed,Thu,Fri
-41,Medicine,Lypson,Monica,Table 3,Table 8,1,Table 3,Table 10
-56,Nursing,Beel-Bates,Cindy,1,Table 5,Table 8,Table 3,Table 2
-50,Medicine,Thor,Johan,Table 4,Table 5,Table 7,Table 10,Table 10
-27,Medicine,Fish,Jason,Table 5,Table 2,Table 4,Table 3,Table 3
-26,Medicine,Englander,Bob,Table 8,Table 10,Table 9,Table 7,Table 10
-19,Medicine,Andersson-G_re,Boel,Table 10,Table 6,Table 3,Table 7,Table 2
-70,Nursing,Thompson,Sarah,Table 9,1,Table 10,Table 4,Table 10
-4,Health Administration,Clement,Dolores,Table 2,Table 10,Table 10,Table 6,Table 2
-48,Medicine,Suresh,Gautham,Table 3,Table 7,Table 8,Table 2,Table 3
-58,Nursing,Durham,Carol,Table 10,Table 9,Table 9,Table 6,Table 3
-61,Nursing,Goodman,Daisy,Table 8,Table 3,Table 3,Table 4,Table 3
-23,Medicine,Baum,Karyn,Table 10,Table 7,Table 2,Table 10,Table 4
-53,Medicine,Watson,Kathleen,Table 3,Table 4,Table 3,Table 5,Table 4
-14,Health Administration,Restuccia,Joseph,Table 9,Table 4,Table 7,Table 8,Table 2
-67,Nursing,Mueller,Christine,Table 2,Table 4,Table 4,Table 7,Table 5
-46,Medicine,Shalaby,Marc,Table 5,Table 10,Table 6,Table 5,Table 5
-13,Health Administration,O'Connor,Stephen,Table 4,Table 4,Table 9,Table 3,Table 6
-72,Nursing,Wakefield,Bonnie ,Table 6,Table 7,Table 7,Table 3,Table 5
-54,Nursing,Altmiller,Gerry,Table 5,Table 9,Table 7,Table 2,Table 4
-47,Medicine,Stevenson,Katherine,Table 7,Table 6,Table 5,Table 4,Table 4
-9,Health Administration,Hatcher,Paige,Table 3,Table 3,Table 6,Table 10,Table 6
-65,Nursing,Mitchell, Pam,Table 10,Table 8,Table 10,Table 8,Table 5
-52,Medicine,Warm,Eric,Table 6,Table 2,Table 9,Table 8,Table 4
-3,Health Administration,Caron,Rosemary,Table 6,Table 9,Table 8,Table 9,Table 10
-33,Medicine,Headrick,Linda,1,1,1,1,1
-64,Nursing,Miltner,Suzie,Table 3,Table 2,Table 5,Table 8,Table 7
-17,Health Administration,Wakefield,Douglas,Table 7,Table 7,Table 4,Table 10,Table 7
-10,Health Administration,Johnson,Christopher,Table 9,Table 5,Table 9,Table 2,Table 5
-63,Nursing,Hill,Connie,Table 2,Table 5,Table 3,Table 9,Table 6
-59,Nursing,Duthie,Beth,Table 5,Table 7,Table 5,Table 7,Table 6
-71,Nursing,Tilden,Ginny,Table 6,Table 5,Table 5,1,Table 3
-20,Medicine,Barach,Paul,Table 2,Table 3,Table 7,Table 8,Table 8
-45,Medicine,Satish,Usha,Table 7,Table 2,Table 8,Table 5,Table 6
-68,Nursing,Reeves,Susan,Table 2,Table 6,Table 2,Table 2,Table 10
-60,Nursing,Georges,Alicia,Table 4,Table 2,Table 6,Table 9,Table 2
-24,Medicine,Bowen,Judith,Table 4,Table 7,Table 10,Table 6,Table 8
-69,Nursing,Robertson,Bethany,Table 9,Table 8,1,Table 5,Table 7
-39,Medicine,Lannon,Carole,Table 10,Table 5,Table 8,Table 9,Table 7
-15,Health Administration,Robbins,Cathy,Table 5,Table 9,Table 3,Table 8,Table 9
-74,Nursing,Zierler,Brenda,Table 5,Table 6,Table 10,Table 10,1
-36,Medicine,Huntington,Jonathan,Table 6,Table 3,Table 10,Table 9,Table 9
-16,Health Administration,Stefl,Mary,Table 10,Table 7,Table 6,1,Table 10
-22,Medicine,Batalden,Paul,Table 8,Table 5,Table 10,Table 7,Table 8
-21,Medicine,Batalden,Maren,Table 9,Table 10,Table 5,Table 9,Table 8
-31,Medicine,Geltman,Joshua,Table 5,Table 8,Table 8,Table 6,Table 9
-11,Health Administration,Lee,Bob,Table 8,Table 2,1,Table 2,Table 9
-1,Health Administration,Arrington,Barbara,Table 6,Table 8,Table 3,Table 9,Table 8
-7,Health Administration,Gentry,Daniel,1,Table 6,Table 8,Table 6,Table 5
-73,Nursing,Yannaco,Terri,Table 3,Table 10,Table 2,Table 5,Table 9
-18,Medicine,Alessandrini,Evie,Table 6,Table 6,Table 9,Table 8,Table 6
-37,Medicine,Johnson,Julie,Table 2,Table 7,1,Table 4,Table 2
+74,Nursing,Zierler,Brenda,Table 4,Table 7,Table 5,Table 8,1
+68,Nursing,Reeves,Susan,Table 3,Table 8,Table 8,Table 8,Table 2
+27,Medicine,Fish,Jason,Table 4,Table 10,Table 10,Table 2,Table 2
+13,Health Administration,O'Connor,Stephen,Table 5,Table 7,Table 8,Table 4,Table 3
+23,Medicine,Baum,Karyn,Table 8,Table 2,Table 5,Head,Table 2
+51,Medicine,Viggiano,Thomas,Table 2,Table 6,Table 8,1,Table 4
+24,Medicine,Bowen,Judith,Table 3,Table 9,Table 7,Table 5,Table 3
+12,Health Administration,Mittler,Jessica,Table 3,1,Table 5,Table 10,Table 4
+11,Health Administration,Lee,Bob,Table 6,Table 3,1,Table 6,Table 2
+4,Health Administration,Clement,Dolores,Table 8,Table 9,Table 2,Table 9,Table 4
+8,Health Administration,Grazier,Kyle,Table 4,Table 2,Table 7,Table 6,Table 5
+1,Health Administration,Arrington,Barbara,Table 2,Head,Table 9,Table 5,Table 2
+70,Nursing,Thompson,Sarah,Table 7,1,Table 4,Table 2,Table 3
+47,Medicine,Stevenson,Katherine,Table 9,Head,Table 7,Table 4,Table 6
+41,Medicine,Lypson,Monica,Table 8,Table 7,1,Table 7,Table 5
+56,Nursing,Beel-Bates,Cindy,1,Table 5,Table 9,Table 3,Table 3
+60,Nursing,Georges,Alicia,Table 5,Table 3,Table 7,Table 3,Table 4
+65,Nursing,Mitchell, Pam,Table 5,Table 4,Table 5,Table 6,Table 6
+9,Health Administration,Hatcher,Paige,Table 3,Table 4,Table 6,Head,Table 5
+49,Medicine,Th_rne,Karin,Head,Table 7,Table 10,Table 9,Table 6
+34,Medicine,Hirsh,David,Table 3,Table 3,Table 2,Table 4,1
+50,Medicine,Thor,Johan,Table 6,Table 7,Table 9,Table 2,Table 4
+64,Nursing,Miltner,Suzie,Head,Table 2,Table 6,Table 4,Table 4
+54,Nursing,Altmiller,Gerry,Table 3,Table 5,Table 10,Table 7,Table 7
+5,Health Administration,Diana,Mark,Head,Table 4,Table 2,Table 5,Table 7
+28,Medicine,Foster,Tina,Table 4,Table 8,Table 6,Table 7,Table 3
+66,Nursing,Moore,Shirley,Table 5,Table 8,Head,Table 10,Table 7
+42,Medicine,Madigosky,Wendy,Table 5,1,Table 3,Table 7,Table 8
+20,Medicine,Barach,Paul,Table 6,Table 2,Table 10,Table 10,Head
+29,Medicine,Frankel,Richard,Table 7,Table 3,Table 3,Table 8,Table 5
+36,Medicine,Huntington,Jonathan,Table 7,Table 2,Table 5,Table 5,Table 8
+44,Medicine,Ogrinc,Greg,Table 4,Table 5,Table 8,Table 5,Table 6
+14,Health Administration,Restuccia,Joseph,Table 4,Table 6,Table 3,Table 10,Table 9
 32,Medicine,Gibson,Rosemary,1,1,1,1,1
-40,Medicine,Lewin,Linda,Table 6,Table 9,Table 4,Table 10,Table 2
-35,Medicine,Holmboe,Eric,1,Table 4,Table 6,Table 4,Table 7
-30,Medicine,Galbraith,Robert,Table 4,Table 8,Table 2,Table 4,Table 6
-34,Medicine,Hirsh,David,Table 8,Table 4,Table 7,Table 8,1
-62,Nursing,Groves,Patricia,Table 7,Table 10,Table 9,Table 10,Table 6
-6,Health Administration,Gelmon,Sherril,Table 4,Table 10,Table 8,Table 7,Table 4
-25,Medicine,Coleman,Mary,Table 7,Table 9,Table 6,Table 3,Table 9
-42,Medicine,Madigosky,Wendy,Table 2,1,Table 5,Table 6,Table 9
-57,Nursing,Dolansky,Mary,Table 7,Table 3,Table 7,Table 6,Table 7
-38,Medicine,Kirkland,Kathy,Table 8,Table 6,Table 6,Table 6,Table 10
-51,Medicine,Viggiano,Thomas,Table 9,Table 8,Table 9,1,Table 3
-43,Medicine,Mahaniah,Kiame,Table 4,Table 3,Table 4,Table 2,Table 5
-55,Nursing,Armstrong,Gail,Table 8,Table 9,1,Table 7,Table 8
-29,Medicine,Frankel,Richard,Table 7,Table 4,Table 10,Table 2,Table 7
-49,Medicine,Th_rne,Karin,Table 9,Table 3,Table 2,Table 3,Table 3
-66,Nursing,Moore,Shirley,Table 10,Table 10,Table 4,Table 4,Table 8
-8,Health Administration,Grazier,Kyle,Table 5,Table 5,Table 2,Table 5,Table 8
-12,Health Administration,Mittler,Jessica,Table 8,1,Table 2,Table 5,Table 4
-5,Health Administration,Diana,Mark,Table 3,Table 6,Table 4,Table 9,Table 7
-28,Medicine,Foster,Tina,Table 9,Table 2,Table 3,Table 10,Table 5
-44,Medicine,Ogrinc,Greg,Table 10,Table 9,Table 5,Table 5,Table 9
-2,Health Administration,Brannon,Diane,Table 7,Table 8,Table 7,Table 7,1
+16,Health Administration,Stefl,Mary,Table 7,Table 8,Table 10,1,Table 9
+17,Health Administration,Wakefield,Douglas,Table 7,Table 6,Table 9,Table 7,Table 6
+22,Medicine,Batalden,Paul,Table 9,Table 5,Table 6,Table 8,Table 8
+43,Medicine,Mahaniah,Kiame,Table 9,Table 3,Table 5,Table 3,Table 7
+40,Medicine,Lewin,Linda,Table 5,Table 6,Table 6,Table 2,Table 10
+58,Nursing,Durham,Carol,Head,Table 6,Table 7,Table 8,Table 2
+48,Medicine,Suresh,Gautham,Table 2,Table 4,Table 4,Table 8,Table 9
+61,Nursing,Goodman,Daisy,Table 2,Table 9,Table 5,Table 2,Table 5
+18,Medicine,Alessandrini,Evie,Table 2,Table 3,Table 6,Table 5,Table 6
+69,Nursing,Robertson,Bethany,Table 2,Table 2,1,Table 7,Table 10
+59,Nursing,Duthie,Beth,Table 3,Table 2,Table 3,Table 3,Table 6
+39,Medicine,Lannon,Carole,Table 4,Table 9,Table 4,Table 3,Table 8
+73,Nursing,Yannaco,Terri,Table 2,Table 5,Table 3,Table 4,Table 2
+33,Medicine,Headrick,Linda,1,1,1,1,1
+15,Health Administration,Robbins,Cathy,Table 9,Table 2,Table 8,Table 2,Head
+71,Nursing,Tilden,Ginny,Table 4,Table 3,Table 9,1,Table 10
+37,Medicine,Johnson,Julie,Table 3,Table 6,1,Table 9,Table 3
+46,Medicine,Shalaby,Marc,Table 6,Table 6,Table 2,Table 4,Table 5
+57,Nursing,Dolansky,Mary,Table 6,Table 8,Table 4,Table 5,Table 10
+31,Medicine,Geltman,Joshua,Table 9,Table 4,Table 3,Table 9,Table 10
+63,Nursing,Hill,Connie,Table 6,Table 9,Table 3,Head,Table 7
+2,Health Administration,Brannon,Diane,Table 5,Table 5,Table 4,Table 7,1
+10,Health Administration,Johnson,Christopher,Table 8,Table 8,Table 10,Table 3,Table 8
+45,Medicine,Satish,Usha,Table 8,Table 5,Table 7,Table 2,Table 9
+55,Nursing,Armstrong,Gail,Table 4,Table 4,1,Table 4,Table 4
+35,Medicine,Holmboe,Eric,1,Table 8,Table 3,Table 6,Table 4
+62,Nursing,Groves,Patricia,Table 6,Head,Table 6,Table 9,Table 9
+7,Health Administration,Gentry,Daniel,1,Table 3,Table 4,Table 2,Table 8
+21,Medicine,Batalden,Maren,Table 7,Table 4,Table 8,Table 3,Table 2
+25,Medicine,Coleman,Mary,Table 7,Table 5,Table 2,Table 6,Table 10
+53,Medicine,Watson,Kathleen,Table 2,Table 8,Table 2,Table 3,Table 3
+19,Medicine,Andersson-G_re,Boel,Table 8,Table 10,Table 4,Table 4,Table 7
+26,Medicine,Englander,Bob,Table 5,Table 2,Table 9,Table 9,Table 5
+52,Medicine,Warm,Eric,Table 6,Table 4,Table 7,Table 7,Table 2
+30,Medicine,Galbraith,Robert,Table 5,Table 9,Table 10,Table 8,Table 10
+3,Health Administration,Caron,Rosemary,Table 6,Table 5,Table 5,Table 4,Table 3
+38,Medicine,Kirkland,Kathy,Table 3,Table 7,Table 4,Table 6,Table 9
+6,Health Administration,Gelmon,Sherril,Table 2,Table 7,Table 7,Table 9,Table 7
+67,Nursing,Mueller,Christine,Table 7,Table 9,Table 7,Table 10,Head
+72,Nursing,Wakefield,Bonnie ,Table 7,Table 7,Table 6,Table 10,Table 8

@@ -8,7 +8,9 @@ def main(people_csv, tables_csv):
     tables = table_objects(tables_csv)
     days = days_list('tables.csv')
     init_solution = build_solution(people, tables, days)
-    final_solution = anneal(init_solution)
-    write_to_csv(final_solution, "output.csv")
+    #final_solution = anneal(init_solution)
+    final_solution = init_solution
+    import pdb; pdb.set_trace()
+    write_to_csv(final_solution[0], "output.csv")
 
 main('people.csv', 'tables.csv')
