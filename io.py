@@ -21,13 +21,11 @@ def people_dicts(filename):
 
 
 def initialize_seatee_lists(tables):
-    for t in tables:
-        for (key, value) in t.iteritems():
-            if key != 'Table Name':
-                opt_value = t[key]
-                t[key] = {}
-                t[key]['opt'] = opt_value
-                t[key]['people'] = []
+    for table_name, table in tables.iteritems():
+        for (day, optimal_capacity) in table.iteritems():
+            table[day] = {}
+            table[day]['opt'] = optimal_capacity
+            table[day]['people'] = []
     return tables
 
 
@@ -37,7 +35,11 @@ def table_dicts(filename):
     Format: { Table Name: Table-one, Mon: 8, Tue: 8, Wed: 7 }
     '''
     reader = csv.DictReader(open(filename,"rwU"))
-    tables = [row for row in reader]
+    temp_tables = [row for row in reader]
+    tables = {}
+    for table in temp_tables:
+        tables[table["Table Name"]] = table
+        del table["Table Name"]
     return initialize_seatee_lists(tables)
 
 

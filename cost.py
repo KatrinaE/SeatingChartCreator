@@ -40,11 +40,9 @@ def get_id_lists(tables):
     """ Returns list of ids of people sitting at a set of tables, e.g. 
     [[1,2,3], [4,5,6]] """
     ids_by_table = []
-    for t in tables:
-        t_by_day = [ day_info for (day, day_info) in t.iteritems() \
-                     if day != 'Table Name']
-        for day in t_by_day:
-            ids_at_t = [ x[0] for x in day['people'] ]
+    for table_name, table in tables.iteritems():
+        for day_name, day_data in table.iteritems():
+            ids_at_t = [ x[0] for x in day_data['people']]
             ids_by_table.append(ids_at_t)
     return ids_by_table
 
@@ -90,22 +88,16 @@ def cf_quads(tables):
 def diff_from_opt_size(table):
     return len(table['people']) - int(table['opt'])
 
-def update_max(maximum, new_item):
-    if new_item  > maximum:
-        maximum = new_item
-    return maximum
-
 def cf_table_size(tables):
     """Distance of each table from its optimum size"""
     maximum = 0
     cost = 0
-    for t in tables:
-        if t['Table Name'] != 'Head':
-            for (day, table) in t.iteritems():
-                if day != 'Table Name':
-                    distance_from_opt = diff_from_opt_size(table)
+    for table_name, table in tables.iteritems():
+        if table_name != 'Head':
+            for (day, day_data) in table.iteritems():
+                    distance_from_opt = diff_from_opt_size(day_data)
                     cost += abs(distance_from_opt)
-                    maximum = update_max(maximum, abs(distance_from_opt))
+                    maximum = max(maximum, abs(distance_from_opt))
 
     print "Max diff btwn table size and optimum size: " + str(maximum)
     return cost
@@ -151,15 +143,13 @@ def cf_balance(tables):
     """Distance of each table from an optimum balance of professions"""
     cost = 0
     maximum = 0
-    for t in tables:
-        print t['Table Name']
-        if t['Table Name'] != 'Head':
-            for (day, table) in t.iteritems():
-                if day != 'Table Name':
-                    max_imbalance_at_table = calc_max_cat_imbalance(table)
-                    maximum = update_max(maximum, max_imbalance_at_table)
-                    cost_of_table_imbalance = calc_overall_imbalance(table)
-                    cost += cost_of_table_imbalance
+    for table_name, table in tables.iteritems():
+        if table_name != 'Head':
+            for (day, day_data) in table.iteritems():
+                max_imbalance_at_table = calc_max_cat_imbalance(day_data)
+                maximum = max(maximum, max_imbalance_at_table)
+                cost_of_table_imbalance = calc_overall_imbalance(day_data)
+                cost += cost_of_table_imbalance
     print "Max distance from optimal # in cat: " + str(maximum)
     return cost
 
