@@ -103,14 +103,14 @@ def imbalance_by_category(table, optimal_sizes):
     desired people in that category (e.g. 3). Returns a list of integers
     relating the distance from optimal for each category, e.g. [1, 2, 3]
     """
-    num_in_each_cat = Counter([ person['Category'] for person in table.people ])
+    num_by_category = Counter([ person['Category'] for person in table.people ])
     distance_list = []
-    for category in optimal_sizes:
-        distance_from_opt = abs(num_in_each_cat[category[0]] - category[1])
+    for category, optimal_size in optimal_sizes.iteritems():
+        actual_size = num_by_category[category]
+        distance_from_opt = abs(actual_size - optimal_size)
         if distance_from_opt >= 3:
             print category
             print distance_from_opt
-            print num_in_each_cat
         distance_list.append(distance_from_opt)
     return distance_list
 
@@ -120,7 +120,7 @@ def calc_max_cat_imbalance(table):
     category deviates from that category's optimal number.
     """
     # Hack Alert! Hard-coded data
-    optimal_sizes = [('Nursing', 3), ('Medicine', 4), ('Health Administration', 2)]
+    optimal_sizes = {'Nursing' : 3 , 'Medicine': 4,'Health Administration' : 2 }
     imbalance_of_each_cat = imbalance_by_category(table, optimal_sizes)
     return max(imbalance_of_each_cat)
 
@@ -129,7 +129,7 @@ def calc_overall_imbalance(table):
     by summing the distances between the optimal number in each category
     and the actual number in that category."""
     # Hack Alert! More hard-coded data
-    optimal_sizes = [('Nursing', 3), ('Medicine', 4), ('Health Administration', 2)]
+    optimal_sizes = {'Nursing' : 3 , 'Medicine': 4,'Health Administration' : 2 }
     cost = imbalance_by_category(table, optimal_sizes)
     return sum(cost)
 
