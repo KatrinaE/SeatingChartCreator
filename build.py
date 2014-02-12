@@ -2,6 +2,16 @@ import heapq
 import random
 from copy import deepcopy
 
+def today_only(tables, day):
+    tables_out = []
+    for table in tables:
+        if table.day == day:
+            tables_out.append(table)
+    return tables_out
+
+def not_head(tables):
+    return [table for table in tables if table.name != 'Head']
+
 def not_full(tables):
     open_tables = []
     for table in tables:
@@ -51,15 +61,9 @@ def table_with_fewest_previous_seatmates(tables, previous_seatmates):
     best_table = min(h)[1]
     return best_table
 
-def today_only(tables, day):
-    tables_out = []
-    for table in tables:
-        if table.day == day:
-            tables_out.append(table)
-    return tables_out
-
 def best_table(person, tables, day):
     open_tables = today_only(tables, day)
+    open_tables = not_head(open_tables)
     open_tables = not_full(open_tables)
     open_tables = cat_not_full(open_tables, person['Category'])
     previous_seatmates = get_previous_seatmates(person, tables)
