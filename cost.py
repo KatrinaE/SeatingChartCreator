@@ -21,17 +21,25 @@ def display_output(freq_counter):
         if k != 1:
             print str(k) + ": " + str(v)
 
-def cf_location(people):
+def cf_location(tables):
     """ Cost of people sitting in same place multiple times """
-    max_freq_tally = []
-    for p in people:
-        max_freq = most_days_at_one_table(p)
-        max_freq_tally.append(max_freq)
-    max_freq_counter = Counter(max_freq_tally)
-    weights = { 1:0, 2:1, 3:10, 4:100, 5:1000 }
-    cost = calc_cost(max_freq_counter, weights)
-    print "Number of times a person sits at each of his/her tables: "
-    display_output(max_freq_counter)
+    all_people_ever_at_tables = {}
+    for table in tables:
+        ids = [person['id'] for person in table.people]
+        try:
+            all_people_ever_at_tables[table.name].extend(ids)
+        except KeyError: # table not yet in dict
+            all_people_ever_at_tables[table.name] = ids
+
+    frequencies = []
+    for table_name, ids in all_people_ever_at_tables.iteritems():
+        c = Counter(ids)
+        frequencies.extend(c.values())
+
+    frequencies_counter = Counter(frequencies)
+    for freq, tally in frequencies_counter.iteritems():
+        print "Num in same place " + str(freq) + " times: " + str(tally)
+    cost = 0
     return cost
 
 def get_id_lists(tables):
@@ -203,7 +211,7 @@ def cost_of(solution):
     people_out = solution[0]
     tables_out = solution[1]
     weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
-    total_cost = weights[0] * cf_location(people_out) + \
+    total_cost = weights[0] * cf_location(tables_out) + \
                  weights[1] * cf_pairs(tables_out) + \
                  weights[2] * cf_trios(tables_out) + \
                  weights[3] * cf_quads(tables_out) + \
