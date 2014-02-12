@@ -30,26 +30,24 @@ def cf_location(people):
     max_freq_counter = Counter(max_freq_tally)
     weights = { 1:0, 2:1, 3:10, 4:100, 5:1000 }
     cost = calc_cost(max_freq_counter, weights)
-
     print "Number of times a person sits at each of his/her tables: "
     display_output(max_freq_counter)
-
     return cost
 
 def get_id_lists(tables):
     """ Returns list of ids of people sitting at a set of tables, e.g. 
     [[1,2,3], [4,5,6]] """
     ids_by_table = []
-    for table_name, table in tables.iteritems():
-        for day_name, day_data in table.iteritems():
-            ids_at_t = [ x[0] for x in day_data['people']]
-            ids_by_table.append(ids_at_t)
+    for table in tables:
+        ids_by_table.append([person['id'] for person in table.people])
     return ids_by_table
 
 def times_each_group_sat_together(tables, group_size):
+    """
+    times_each_group_sat_together has the form [((id1, id2), count), ]
+    """
     ids_by_table = get_id_lists(tables)
-    times_each_group_sat_together = Counter(chain.from_iterable(combinations(\
-                            table, group_size) for table in ids_by_table))
+    times_each_group_sat_together = Counter(chain.from_iterable(combinations(table, group_size) for table in ids_by_table))
     return times_each_group_sat_together
 
 def create_tally(freq_by_group):
@@ -85,19 +83,15 @@ def cf_quads(tables):
     '''cost of 4 people sitting together 1, 2, 3, 4, 5 times'''
     return cost_of_times_together(tables, 4)
 
-def diff_from_opt_size(table):
-    return len(table['people']) - int(table['opt'])
-
 def cf_table_size(tables):
-    """Distance of each table from its optimum size"""
+    """Distance of each table from its capacity"""
     maximum = 0
     cost = 0
-    for table_name, table in tables.iteritems():
-        if table_name != 'Head':
-            for (day, day_data) in table.iteritems():
-                    distance_from_opt = diff_from_opt_size(day_data)
-                    cost += abs(distance_from_opt)
-                    maximum = max(maximum, abs(distance_from_opt))
+    for table in tables:
+        if table.name != 'Head':
+            distance_from_capacity = len(table.people) - int(table.capacity)
+            cost += abs(distance_from_capacity)
+            maximum = max(maximum, abs(distance_from_capacity))
 
     print "Max diff btwn table size and optimum size: " + str(maximum)
     return cost
@@ -109,17 +103,15 @@ def imbalance_by_category(table, optimal_sizes):
     desired people in that category (e.g. 3). Returns a list of integers
     relating the distance from optimal for each category, e.g. [1, 2, 3]
     """
-    tally_num_people_in_each_cat = [ x[1] for x in table['people'] ]
-    summed_tally = Counter(tally_num_people_in_each_cat)
-        
+    num_in_each_cat = Counter([ person['Category'] for person in table.people ])
     distance_list = []
     for category in optimal_sizes:
-        cat_distance = abs(summed_tally[category[0]] - category[1])
-        if cat_distance >= 3:
+        distance_from_opt = abs(num_in_each_cat[category[0]] - category[1])
+        if distance_from_opt >= 3:
             print category
-            print cat_distance
-            print summed_tally
-        distance_list.append(cat_distance)
+            print distance_from_opt
+            print num_in_each_cat
+        distance_list.append(distance_from_opt)
     return distance_list
 
 def calc_max_cat_imbalance(table):
@@ -127,6 +119,7 @@ def calc_max_cat_imbalance(table):
     specifically how far the number of people in the least-optimal
     category deviates from that category's optimal number.
     """
+    # Hack Alert! Hard-coded data
     optimal_sizes = [('Nursing', 3), ('Medicine', 4), ('Health Administration', 2)]
     imbalance_of_each_cat = imbalance_by_category(table, optimal_sizes)
     return max(imbalance_of_each_cat)
@@ -135,6 +128,7 @@ def calc_overall_imbalance(table):
     """ Calculates how far a seating arrangement deviates from optimal
     by summing the distances between the optimal number in each category
     and the actual number in that category."""
+    # Hack Alert! More hard-coded data
     optimal_sizes = [('Nursing', 3), ('Medicine', 4), ('Health Administration', 2)]
     cost = imbalance_by_category(table, optimal_sizes)
     return sum(cost)
@@ -143,13 +137,12 @@ def cf_balance(tables):
     """Distance of each table from an optimum balance of professions"""
     cost = 0
     maximum = 0
-    for table_name, table in tables.iteritems():
-        if table_name != 'Head':
-            for (day, day_data) in table.iteritems():
-                max_imbalance_at_table = calc_max_cat_imbalance(day_data)
-                maximum = max(maximum, max_imbalance_at_table)
-                cost_of_table_imbalance = calc_overall_imbalance(day_data)
-                cost += cost_of_table_imbalance
+    for table in tables:
+        if table.name != 'Head':
+            max_imbalance_at_table = calc_max_cat_imbalance(table)
+            maximum = max(maximum, max_imbalance_at_table)
+            cost_of_table_imbalance = calc_overall_imbalance(table)
+            cost += cost_of_table_imbalance
     print "Max distance from optimal # in cat: " + str(maximum)
     return cost
 
@@ -157,7 +150,7 @@ def add_to_connections_tally(tally, pair):
     """ Given a pair of people (IDs) who sit together 1+ times, adds one 
     to the overall tally of how many others each person has sat with """
     for person in pair:
-        # ids 32 & 33 sit @ head table every day
+        # Hack Alert! ids 32 & 33 sit @ head table every day
         if person not in (32, 33):
             try:
                 tally[person] += 1
@@ -171,6 +164,7 @@ def calc_connections(tables):
     """
     freq_of_each_pair = times_each_group_sat_together(tables, 2)
     num_sat_with = {}
+
     for pair in freq_of_each_pair.keys():
         num_sat_with = add_to_connections_tally(num_sat_with, pair)
     return num_sat_with
