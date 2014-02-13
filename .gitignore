@@ -2,6 +2,7 @@
 # from https://github.com/github/gitignore/blob/master/Python.gitignore
 
 Seating\ Chart\ Criteria.docx
+output.csv
 
 *#*
 .DS_Store
