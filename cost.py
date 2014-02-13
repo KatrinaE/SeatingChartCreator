@@ -24,7 +24,7 @@ def display_output(freq_counter):
 def cf_location(tables):
     """ Cost of people sitting in same place multiple times """
     all_people_ever_at_tables = {}
-    for table in tables:
+    for table in [table for table in tables if table.name != 'Head']:
         ids = [person['id'] for person in table.people]
         try:
             all_people_ever_at_tables[table.name].extend(ids)
@@ -37,9 +37,9 @@ def cf_location(tables):
         frequencies.extend(c.values())
 
     frequencies_counter = Counter(frequencies)
-    for freq, tally in frequencies_counter.iteritems():
-        print "Num in same place " + str(freq) + " times: " + str(tally)
     cost = 0
+    for freq, tally in frequencies_counter.iteritems():
+        cost += (freq**4 * tally)
     return cost
 
 def get_id_lists(tables):
@@ -117,8 +117,7 @@ def imbalance_by_category(table, optimal_sizes):
         actual_size = num_by_category[category]
         distance_from_opt = abs(actual_size - optimal_size)
         if distance_from_opt >= 3:
-            print category
-            print distance_from_opt
+            continue
         distance_list.append(distance_from_opt)
     return distance_list
 
