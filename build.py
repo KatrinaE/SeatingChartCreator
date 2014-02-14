@@ -15,9 +15,9 @@ def not_head(tables):
 def not_full(tables):
     open_tables = []
     for table in tables:
-            if len(table.people) < table.capacity:
-                open_tables.append(table)
-    if open_tables == []:
+        if len(table.people) < int(table.capacity):
+            open_tables.append(table)
+    if not open_tables:
         raise Error("More people than tables!")
     else:
         return open_tables
