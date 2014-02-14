@@ -1,5 +1,6 @@
 from collections import Counter
 from itertools import chain, combinations
+from cf_overlaps import times_each_group_sat_together
 
 def add_to_connections_tally(tally, pair):
     """ Given a pair of people (IDs) who sit together 1+ times, adds one 
