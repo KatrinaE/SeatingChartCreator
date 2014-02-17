@@ -94,7 +94,7 @@ def populate_head_table(tables, people):
                 head_table = seat_person_at_table(head_table, person)
     return tables
 
-def build_solution(people, tables, all_days):
+def build_guess(people, tables, all_days):
     tables_out = populate_head_table(tables, people)
     for d in all_days:
         random.shuffle(people)

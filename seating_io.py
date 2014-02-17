@@ -21,14 +21,6 @@ def people_objects(filename):
         current_id += 1
     return people_list
 
-def initialize_seatee_lists(tables):
-    for table_name, table in tables.iteritems():
-        for (day, optimal_capacity) in table.iteritems():
-            table[day] = {}
-            table[day]['opt'] = optimal_capacity
-            table[day]['people'] = []
-    return tables
-
 class Table(object):
     def __init__(self, name, day, capacity):
         self.name = name
@@ -52,13 +44,12 @@ def table_objects(filename):
             tables.append(table_object)
     return tables
 
-
 def days_list(filename):
     reader = csv.reader(open(filename, "rwU"))
     header = reader.next()
-    days_list = [day for day in header if day not in ['Table Name', 'Category', 'First Name', 'Last Name']]
+    days_list = [day for day in header if day not in 
+                 ['Table Name', 'Category', 'First Name', 'Last Name']]
     return days_list
-
 
 def tables_to_people(tables_list):
     all_people = []
@@ -72,7 +63,8 @@ def tables_to_people(tables_list):
 
 def write_to_csv(tables, filename):
     people = tables_to_people(tables)
-    fieldnames = ['id','category', 'last_name', 'first_name', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+    fieldnames = ['id','category', 'last_name', 'first_name', 
+                  'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     output_file = open(filename,'wb')
     csvwriter = csv.DictWriter(output_file, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn,fn) for fn in fieldnames))
