@@ -35,7 +35,7 @@ def cat_not_full(tables, category):
     max_allowed = max_for_category(category)
     open_tables = []
     for table in tables:
-        people = [p for p in table.people if p['Category'] == category]
+        people = [p for p in table.people if p.category  == category]
         if len(people) < max_allowed:
             open_tables.append(table)
     if open_tables == []:
@@ -47,13 +47,13 @@ def get_previous_seatmates(person, tables):
     ids_of_previous_seatmates = []
     for table in tables:
         if person in table.people:
-            ids_of_previous_seatmates.extend([p['id'] for p in table.people if p['id'] != person['id']])
+            ids_of_previous_seatmates.extend([p.id for p in table.people if p.id != person.id])
     return ids_of_previous_seatmates
 
 def table_with_fewest_previous_seatmates(tables, ids_of_previous):
     h = []
     for table in tables:
-        ids_at_table = [person['id'] for person in table.people]
+        ids_at_table = [person.id for person in table.people]
         intersection = set(ids_at_table) & set(ids_of_previous)
         num_prev_seatmates = len(intersection)
         h.append((num_prev_seatmates, table))
@@ -64,21 +64,21 @@ def best_table(person, tables, day):
     open_tables = today_only(tables, day)
     open_tables = not_head(open_tables)
     open_tables = not_full(open_tables)
-    open_tables = cat_not_full(open_tables, person['Category'])
+    open_tables = cat_not_full(open_tables, person.category)
     previous_seatmates = get_previous_seatmates(person, tables)
     table_name = table_with_fewest_previous_seatmates(open_tables, previous_seatmates)
     return table_name
 
 def assign_table(person, tables, day):
     table = best_table(person, tables, day)
-    person[day] = table.name
+    setattr(person, day, table.name)
     seat_person_at_table(table, person)
 
 def seat_campers(people, tables, day):
     for person in people:
-        if person[day] is '':
+        if getattr(person, day) is '':
             assign_table(person, tables, day)
-    return people, tables
+    return tables
 
 def seat_person_at_table(table, person):
     table.people.append(person)
@@ -90,7 +90,7 @@ def populate_head_table(tables, people):
         day = head_table.day
         for person in people:
             # Hack Alert! Hard-coded
-            if person[day] == '1':
+            if getattr(person, day) == '1':
                 head_table = seat_person_at_table(head_table, person)
     return tables
 
@@ -98,13 +98,5 @@ def build_solution(people, tables, all_days):
     tables_out = populate_head_table(tables, people)
     for d in all_days:
         random.shuffle(people)
-        people, tables_out = seat_campers(people, tables_out, d)
-
-    return people, tables_out
-
-
-
-
-
-
-
+        tables_out = seat_campers(people, tables_out, d)
+    return tables_out

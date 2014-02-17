@@ -6,8 +6,7 @@ from cost_funcs.cf_same_spot import cf_same_spot
 from cost_funcs.cf_table_size import cf_table_size
 
 def cost_of(solution):
-    people_out = solution[0]
-    tables_out = solution[1]
+    tables_out = solution
     weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
     print "Cost of same spot: " + str(cf_same_spot(tables_out))
     print "Cost of table size: " + str(cf_table_size(tables_out))

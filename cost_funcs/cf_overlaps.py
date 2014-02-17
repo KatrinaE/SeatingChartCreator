@@ -13,7 +13,7 @@ def times_each_group_sat_together(tables, group_size):
     """
     ids_by_table = []
     for table in tables:
-        ids_by_table.append([person['id'] for person in table.people])
+        ids_by_table.append([person.id for person in table.people])
     times_each_group_sat_together = (
         Counter(chain.from_iterable(combinations(table, group_size) 
                                     for table in ids_by_table)))

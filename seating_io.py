@@ -1,24 +1,25 @@
 import csv
 
-def add_IDs(people):
-    '''
-    Adds a unique ID for each camper
-    '''
-    i=1
-    for person in people:
-        person["id"] = i
-        i +=1
-    return people
+class Person(object):
+    def __init__(self, id, person_dict):
+        self.id = id
+        self.category = person_dict.pop('Category')
+        self.first_name = person_dict.pop('First Name')
+        self.last_name = person_dict.pop('Last Name')
+        for (day, seat_assignment)  in person_dict.iteritems():
+            setattr(self, day, seat_assignment)
 
-def people_dicts(filename):
-    '''
-    Creates a list of dictionaries, where each dict represents 1 camper
-    Format: { First Name: Bob, Last Name: Jones, Category: Nurse, Mon: , Tue: 2, }
-    '''
+def people_objects(filename):
     reader = csv.DictReader(open(filename,"rwU"))
     people = [row for row in reader]
-    return add_IDs(people)
-
+    current_id = 1
+    people_list = []
+    days = days_list(filename)
+    for p in people: 
+        person = Person(current_id, p)
+        people_list.append(person)
+        current_id += 1
+    return people_list
 
 def initialize_seatee_lists(tables):
     for table_name, table in tables.iteritems():
@@ -55,12 +56,23 @@ def table_objects(filename):
 def days_list(filename):
     reader = csv.reader(open(filename, "rwU"))
     header = reader.next()
-    days_list = [day for day in header if day != 'Table Name']
+    days_list = [day for day in header if day not in ['Table Name', 'Category', 'First Name', 'Last Name']]
     return days_list
 
 
-def write_to_csv(people, filename):
-    fieldnames = ['id','Category', 'Last Name', 'First Name', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+def tables_to_people(tables_list):
+    all_people = []
+    people_dicts = []
+    for table in tables_list:
+        all_people.extend(table.people)
+    unique_people = set(all_people)
+    for person in unique_people:
+        people_dicts.append(person.__dict__)
+    return people_dicts
+
+def write_to_csv(tables, filename):
+    people = tables_to_people(tables)
+    fieldnames = ['id','category', 'last_name', 'first_name', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     output_file = open(filename,'wb')
     csvwriter = csv.DictWriter(output_file, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn,fn) for fn in fieldnames))

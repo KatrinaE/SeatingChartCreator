@@ -7,7 +7,7 @@ def imbalance(table):
     """
     # Hack Alert! More hard-coded data
     optimal_sizes = {'Nursing' : 3 , 'Medicine': 4,'Health Administration' : 2 }
-    num_by_category = Counter([ person['Category'] for person in table.people ])
+    num_by_category = Counter([ person.category for person in table.people ])
     distance_list = []
     for category, optimal_size in optimal_sizes.iteritems():
         actual_size = num_by_category[category]
