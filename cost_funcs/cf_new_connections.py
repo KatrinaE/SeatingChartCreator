@@ -37,8 +37,8 @@ def cf_diff_in_connections(tables):
     person_who_made_most_connections = max(num_sat_with, key = num_sat_with.get)
     max_sat_with = num_sat_with[person_who_made_most_connections]
 
-    cost = max_sat_with - min_sat_with
-    print "Diff btwn  most connections & fewest connections: " + str(cost)
+    cost = (max_sat_with - min_sat_with)**3
+    #print "Cost of diff in connections: " + str(cost)
     return cost
 
 def mean(nums):
@@ -52,5 +52,5 @@ def cf_avg_connections(tables):
     """ Average number of new people each person sits with all week """
     num_sat_with_dict = calc_connections(tables)
     avg_connections = mean(num_sat_with_dict.values())
-    print "Avg num connections: " + str(avg_connections)
+    #print "Avg num connections: " + str(avg_connections)
     return avg_connections

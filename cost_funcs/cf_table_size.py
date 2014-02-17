@@ -8,5 +8,5 @@ def cf_table_size(tables):
             cost += abs(distance_from_capacity)**4
             maximum = max(maximum, abs(distance_from_capacity))
 
-    print "Max diff btwn table size and optimum size: " + str(maximum)
+            #    print "Cost of diff btwn table size and optimal size: " + str(cost)
     return cost

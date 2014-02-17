@@ -31,10 +31,13 @@ def cost_of_overlaps(tables, group_size):
         if freq != 1:
             cost += (freq**4 * num_occurrences)
 
-    if cost > 0:
-        print "Number of times a group of " + str(group_size) + " sits together X times: "
-        display_output(freq_of_freqs)
-        print "Cost of these overlaps is " + str(cost)
+    #if cost > 0:
+        
+        #print ''
+        #print "Number of times a group of " + str(group_size) + " sits together X times: "
+        #display_output(freq_of_freqs)
+        #print "Cost of these overlaps: " + str(cost)
+        #print ''
     return cost
 
 def cf_pairs(tables):

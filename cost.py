@@ -9,10 +9,15 @@ def cost_of(solution):
     people_out = solution[0]
     tables_out = solution[1]
     weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
-    total_cost = weights[0] * cf_same_spot(tables_out) + \
-                 weights[4] * cf_table_size(tables_out) + \
-                 weights[5] * cf_category_balance(tables_out) +\
+    print "Cost of same spot: " + str(cf_same_spot(tables_out))
+    print "Cost of table size: " + str(cf_table_size(tables_out))
+    print "Cost of cat balance: " + str(cf_category_balance(tables_out))
+    print "Cost of overlaps: " + str(cf_overlaps(tables_out))
+    print "Cost of diff in connections: " + str(cf_diff_in_connections(tables_out))
+    total_cost = weights[1] * cf_same_spot(tables_out) + \
+                 weights[1] * cf_table_size(tables_out) + \
+                 weights[1] * cf_category_balance(tables_out) +\
                  weights[1] * cf_overlaps(tables_out) + \
-                 weights[1] * cf_avg_connections(tables_out) + \
                  weights[1] * cf_diff_in_connections(tables_out)
+    print "Total cost: " + str(total_cost)
     return total_cost

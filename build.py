@@ -44,17 +44,16 @@ def cat_not_full(tables, category):
         return open_tables
 
 def get_previous_seatmates(person, tables):
-    seatmates = []
+    ids_of_previous_seatmates = []
     for table in tables:
         if person in table.people:
-            seatmates.extend(table.people)
-    return seatmates
+            ids_of_previous_seatmates.extend([p['id'] for p in table.people if p['id'] != person['id']])
+    return ids_of_previous_seatmates
 
-def table_with_fewest_previous_seatmates(tables, previous_seatmates):
+def table_with_fewest_previous_seatmates(tables, ids_of_previous):
     h = []
     for table in tables:
         ids_at_table = [person['id'] for person in table.people]
-        ids_of_previous = [person['id'] for person in previous_seatmates]
         intersection = set(ids_at_table) & set(ids_of_previous)
         num_prev_seatmates = len(intersection)
         h.append((num_prev_seatmates, table))

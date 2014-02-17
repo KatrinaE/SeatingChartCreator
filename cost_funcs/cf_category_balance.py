@@ -24,4 +24,5 @@ def cf_category_balance(tables):
             imbalances = imbalance(table)
             for category_imbalance in imbalances:
                 cost += category_imbalance**4
+    #print "Cost of category imbalances: " + str(cost)
     return cost
