@@ -51,18 +51,35 @@ def days_list(filename):
                  ['Table Name', 'Category', 'First Name', 'Last Name']]
     return days_list
 
-def tables_to_people(tables_list):
+def tables_to_people(tables_list, output_format = 'objects'):
     all_people = []
-    people_dicts = []
+    people_out = []
     for table in tables_list:
         all_people.extend(table.people)
     unique_people = set(all_people)
+    bad_ppl = 0
     for person in unique_people:
-        people_dicts.append(person.__dict__)
-    return people_dicts
+        import collections
+        her_tables = collections.Counter([v for (k,v) in person.__dict__.iteritems() 
+                          if k in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']])
+        tables_with_her = collections.Counter([t.name for t in tables_list if person in t.people])
+        if her_tables != tables_with_her and '1' not in her_tables and output_format == 'objects':
+            #print person.id
+            #print her_tables
+            #print tables_with_her
+            #print ' '
+            bad_ppl += 1
+        if bad_ppl > 0:
+            print "bad people is " + str(bad_ppl)
+            import ipdb; ipdb.set_trace()
+        if output_format == 'dicts':
+            people_out.append(person.__dict__)
+        elif output_format == 'objects':
+            people_out.append(person)
+    return people_out
 
 def write_to_csv(tables, filename):
-    people = tables_to_people(tables)
+    people = tables_to_people(tables, output_format='dicts')
     fieldnames = ['id','category', 'last_name', 'first_name', 
                   'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     output_file = open(filename,'wb')
