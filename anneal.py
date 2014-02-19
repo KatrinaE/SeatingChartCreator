@@ -74,7 +74,7 @@ def neighbor(tables):
     people = tables_to_people(tables, output_format = 'objects')
     person_to_switch = saddest_person(people)
 
-    # this is the bad part!
+
     bad_table_tuple = most_freq_table(person_to_switch)
     bad_table_all_days = [t for t in tables
                              if t.name == bad_table_tuple[0]
