@@ -18,6 +18,7 @@ def cf_same_spot(tables):
     frequencies_counter = Counter(frequencies)
     cost = 0
     for freq, tally in frequencies_counter.iteritems():
-        cost += (freq**4 * tally)
+        if freq > 1:
+            cost += (freq**4 * tally)
         #    print "Cost of ppl sitting in same spot: " + str(cost)
     return cost

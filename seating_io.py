@@ -63,14 +63,12 @@ def tables_to_people(tables_list, output_format = 'objects'):
         her_tables = collections.Counter([v for (k,v) in person.__dict__.iteritems() 
                           if k in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']])
         tables_with_her = collections.Counter([t.name for t in tables_list if person in t.people])
-        if her_tables != tables_with_her and '1' not in her_tables and output_format == 'objects':
-            #print person.id
-            #print her_tables
-            #print tables_with_her
-            #print ' '
+        if her_tables != tables_with_her and '1' not in her_tables.iterkeys() and output_format == 'objects' and 'Head' not in tables_with_her.iterkeys():
+            print person.id
+            print her_tables
+            print tables_with_her
+            print ' '
             bad_ppl += 1
-        if bad_ppl > 0:
-            print "bad people is " + str(bad_ppl)
             import ipdb; ipdb.set_trace()
         if output_format == 'dicts':
             people_out.append(person.__dict__)

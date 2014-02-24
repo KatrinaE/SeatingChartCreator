@@ -1,6 +1,7 @@
 import heapq
 import random
 from copy import deepcopy
+import config
 
 def today_only(tables, day):
     tables_out = []
@@ -64,9 +65,12 @@ def best_table(person, tables, day):
     open_tables = today_only(tables, day)
     open_tables = not_head(open_tables)
     open_tables = not_full(open_tables)
-    open_tables = cat_not_full(open_tables, person.category)
-    previous_seatmates = get_previous_seatmates(person, tables)
-    table_name = table_with_fewest_previous_seatmates(open_tables, previous_seatmates)
+    if not config.random_start:
+        open_tables = cat_not_full(open_tables, person.category)
+        previous_seatmates = get_previous_seatmates(person, tables)
+        table_name = table_with_fewest_previous_seatmates(open_tables, previous_seatmates)
+    else:
+        table_name = random.choice(open_tables)
     return table_name
 
 def assign_table(person, tables, day):

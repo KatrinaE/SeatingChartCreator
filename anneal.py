@@ -1,12 +1,15 @@
-from math import *
+#from math import *
+import math
 from matplotlib.pylab import *
 from collections import Counter
 
 from cost import cost_of
 from seating_io import tables_to_people
-
+import warnings
 import random
 from scipy.stats import norm
+
+import config
 
 def norm_pdf(z):
     """
@@ -17,17 +20,23 @@ def norm_pdf(z):
     http://docs.scipy.org/doc/scipy/reference/generated/
     scipy.stats.norm.html
     """
-    return norm.pdf(z, scale=1500)
-
-def acceptance_probability(old_guess, old_cost, new_guess, new_cost, 
-                           temp):
+    prob = norm.pdf(z, scale=1500)
+    return prob
+    
+def acceptance_probability(old_cost, new_cost, T):
     """ Metropolis-Hastings probability function for deciding 
     whether or not to accept a new solution. Based on code from: 
     http://code.activestate.com/recipes/
     414200-metropolis-hastings-sampler/
     """
-    acceptance_probability = min\
-                             ([1.,norm_pdf(new_cost)/norm_pdf(old_cost)])
+    try:
+        warnings.simplefilter("error")
+        acceptance_probability = min([1.,math.exp((old_cost-new_cost)/T)])
+    except RuntimeWarning:
+        # neither new nor old cost is probable --> 0/0 situation, just return 0
+        acceptance_probability = 0.0
+    except OverflowError:
+        acceptance_probability = 1
     return acceptance_probability
         
 def persons_tables(person):
@@ -66,20 +75,23 @@ def table_switch(person_to_switch, random_person, table_to_switch_from, table_to
     setattr(random_person, table_to_switch_from.day, table_to_switch_from.name)
 
 def neighbor(tables):
-
-    """
-    Need to find good way to reduce diameter of search graph!!
-    Also need to understand what barrier avoidance is.
-    """
     people = tables_to_people(tables, output_format = 'objects')
-    person_to_switch = saddest_person(people)
 
+    if config.random_anneal:
+        person_to_switch = random.choice([p for p in people 
+                                          if '1' not in p.__dict__.itervalues()])
+        tables_to_switch = [x for x in tables if (x.day, x.name) 
+                            in person_to_switch.__dict__.iteritems()]
+        table_to_switch_from = random.choice(tables_to_switch)
 
-    bad_table_tuple = most_freq_table(person_to_switch)
-    bad_table_all_days = [t for t in tables
+    else: 
+        person_to_switch = saddest_person(people)
+        bad_table_tuple = most_freq_table(person_to_switch)
+        bad_table_all_days = [t for t in tables
                              if t.name == bad_table_tuple[0]
                              and person_to_switch in t.people]
-    table_to_switch_from = random.choice(bad_table_all_days)
+        table_to_switch_from = random.choice(bad_table_all_days)
+
     tables_to_switch_to = [t for t in tables
                            if t is not table_to_switch_from
                            and t.name is not 'Head'
@@ -102,30 +114,32 @@ def anneal(init_guess):
     This is an implementation of pseudocode at: 
     https://en.wikipedia.org/wiki/Simulated_annealing#Pseudocode
     """
+    print "The initial cost is " + str(cost_of(init_guess))
+    max_acceptable = 2000
+    curr_state = best_state = init_guess
+    curr_cost = best_cost = cost_of(init_guess)
+    T = 1
+    alpha = 0.9
+    T_min = .00001
+    while T > T_min and best_cost > max_acceptable:
+        i = 1
+        while i < 50:
+            new_state = neighbor(curr_state)
+            new_cost = cost_of(new_state)
 
-    max_acceptable_cost = 2000
-    current_state = best_state = init_guess
-    current_cost = best_cost = cost_of(init_guess)
-    i = 0
-    imax = 100
-    while i < imax and best_cost > max_acceptable_cost:
-        pass
-        T = temp(i, imax)
-        new_state = neighbor(current_state)
-        new_cost = cost_of(new_state)
-        ap = acceptance_probability(current_state, current_cost, new_state, new_cost, T)
-        r = random.random()
-        if ap > r:
-            print "ACCEPT: " + str(ap) + " > RANDOM: " + str(r)
-            current_state = new_state
-            current_cost = new_cost
-            if current_cost < best_cost:
-                best_state = current_state
-                best_cost = current_cost
-                print "changed best cost to " + str(best_cost)
-                print ''
-        else:
-            print "FAILED TO ACCEPT"
-        i += 1
+            ap = acceptance_probability(curr_cost, new_cost, T)
+            r = random.random()
+
+            if ap > r:
+                #print "ACCEPT: " + str(ap) + " > RANDOM: " + str(r)
+                curr_state = new_state
+                curr_cost = new_cost
+                if curr_cost < best_cost:
+                    best_state = curr_state
+                    best_cost = curr_cost
+                    #print "changed best cost to " + str(best_cost)
+            i = i + 1
+        T = T*alpha
+
     print "The best cost found is: " + str(best_cost)
     return best_state
