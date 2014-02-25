@@ -101,6 +101,7 @@ def neighbor(tables):
         except:
             import ipdb; ipdb.set_trace()
 
+    # there is a bug here somewhere. 
     tables_out_to_switch_to = [t for t in tables_out
                            if t is not table_to_switch_from
                            and t.name is not 'Head'
@@ -113,7 +114,7 @@ def neighbor(tables):
 def temp(iteration, max_iterations):
     return max_iterations/(iteration+1)**4
 
-def anneal(init_guess):
+def anneal(init_guess, verbose=False):
     """
     Applies a simulated annealing algorithm to improve the generated
     seating chart solution. Similar to vanilla hill climbing, but
@@ -133,6 +134,8 @@ def anneal(init_guess):
     alpha = 0.95
     T_min = .001
     while T > T_min and best_cost > max_acceptable:
+        if verbose:
+            print "T is: " + str(T)
         i = 1
         while i < 100:
             new_state = neighbor(curr_state)
@@ -143,20 +146,23 @@ def anneal(init_guess):
 
 
             if ap > r:
-                print ''
-                print "ACCEPT: " + str(ap) + " > RANDOM: " + str(r)
-                print "new state's cost: " + str(new_cost)
+                if verbose==True:
+                    print ''
+                    print "ACCEPT: " + str(ap) + " > RANDOM: " + str(r)
+                    print "new state's cost: " + str(new_cost)
                 curr_state = new_state
                 curr_cost = new_cost
                 if curr_cost < best_cost:
                     best_state = curr_state
                     best_cost = curr_cost
-                    print "changed best cost to " + str(best_cost)
+                    if verbose==True:
+                        print "changed best cost to " + str(best_cost)
 
             else:
-                print ''
-                print "REJECT: " + str(ap) + " < RANDOM: " + str(r)
-                print "new state's cost: " + str(new_cost)
+                if verbose==True:
+                    print ''
+                    print "REJECT: " + str(ap) + " < RANDOM: " + str(r)
+                    print "new state's cost: " + str(new_cost)
             i = i + 1
         T = T*alpha
 

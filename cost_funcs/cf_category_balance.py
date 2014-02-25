@@ -12,7 +12,8 @@ def imbalance(table, verbose):
     for category, optimal_size in optimal_sizes.iteritems():
         actual_size = num_by_category[category]
         distance_from_opt = abs(actual_size - optimal_size)
-        distance_list.append(distance_from_opt)
+        if distance_from_opt > 1: # be flexible due to changing table sizes
+            distance_list.append(distance_from_opt)
 
     return distance_list
 

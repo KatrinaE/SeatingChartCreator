@@ -68,8 +68,9 @@ def tables_to_people(tables_list, output_format = 'objects'):
             print her_tables
             print tables_with_her
             print ' '
-            bad_ppl += 1
             import ipdb; ipdb.set_trace()
+            bad_ppl += 1
+
         if output_format == 'dicts':
             people_out.append(person.__dict__)
         elif output_format == 'objects':
