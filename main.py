@@ -14,11 +14,11 @@ def main(people_csv, tables_csv):
     people = people_objects(people_csv)
     tables = table_objects(tables_csv)
     days = days_list('tables.csv')
-    people_copy = deepcopy(people)
-    tables_copy = deepcopy(tables)
     i = 0
     best_cost = float('inf')
     while i < 10:
+        people_copy = deepcopy(people)
+        tables_copy = deepcopy(tables)
         init_guess = build_guess(people_copy, tables_copy, days)
         c = cost_of(init_guess)
         #if c < best_cost: 
@@ -31,9 +31,9 @@ def main(people_csv, tables_csv):
             solution = anneal(init_guess)
             best_cost = cost_of(solution)
 
-        print "Final best cost on iteration i: " + str(cost_of(solution, verbose=True))
+        print "Final best cost on iteration " + str(i) + ": " + str(cost_of(solution, verbose=True))
         filename = "output" + str(i) + ".csv"
-        write_to_csv(solution, "output.csv")
+        write_to_csv(solution, filename)
 
         i += 1
 
@@ -42,4 +42,4 @@ def main(people_csv, tables_csv):
         # f.write(str(c))
         print "************************************"
 
-main('people.csv', 'tables.csv')
+#main('people.csv', 'tables.csv')

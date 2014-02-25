@@ -1,29 +1,31 @@
 #from math import *
-#import math
+import math
 
-from matplotlib.pylab import *
+#from matplotlib.pylab import *
 from collections import Counter
 
 from cost import cost_of
 from seating_io import tables_to_people
 import warnings
 import random
-from scipy.stats import norm
+#from scipy.stats import norm
 
 import config
 import copy
 
+"""
 def norm_pdf(z):
-    """
+
     Standard normal pdf (Probability Density Function)
     
     pdf is a point value: how dense is the probability at a 
     given point z? See
     http://docs.scipy.org/doc/scipy/reference/generated/
     scipy.stats.norm.html
-    """
+
     prob = norm.pdf(z, scale=1500)
     return prob
+"""
     
 def acceptance_probability(old_cost, new_cost, T):
     """ Metropolis-Hastings probability function for deciding 
@@ -132,10 +134,10 @@ def anneal(init_guess, verbose=False):
     best_cost = curr_cost
     T = 1
     alpha = 0.95
-    T_min = .001
+    T_min = .0001
     while T > T_min and best_cost > max_acceptable:
-        if verbose:
-            print "T is: " + str(T)
+        if True:#verbose:
+            print "T is: " + str(T) + "   Best cost is: " + str(best_cost)
         i = 1
         while i < 100:
             new_state = neighbor(curr_state)
