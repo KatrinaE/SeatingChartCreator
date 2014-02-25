@@ -1,6 +1,6 @@
 from collections import Counter
 
-def cf_same_spot(tables):
+def cf_same_spot(tables, verbose=False):
     """ Cost of people sitting in same place multiple times """
     all_people_ever_at_tables = {}
     for table in [table for table in tables if table.name != 'Head']:
@@ -20,5 +20,6 @@ def cf_same_spot(tables):
     for freq, tally in frequencies_counter.iteritems():
         if freq > 1:
             cost += (freq**4 * tally)
-        #    print "Cost of ppl sitting in same spot: " + str(cost)
+            if verbose == True:
+                print str(tally) + " people sit in the same spot " + str(freq) + " times."
     return cost

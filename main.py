@@ -36,7 +36,7 @@ def main(people_csv, tables_csv):
        # f.write('\n')
        # f.write(str(c))
 
-    print "Final best cost is: " + str(best_cost)
+    print "Final best cost is: " + str(cost_of(solution, verbose=True))
     write_to_csv(solution, "output.csv")
     print "************************************"
 

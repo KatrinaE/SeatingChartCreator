@@ -48,9 +48,10 @@ def mean(nums):
         return 0.0
 
 
-def cf_avg_connections(tables):
+def cf_avg_connections(tables, verbose=False):
     """ Average number of new people each person sits with all week """
     num_sat_with_dict = calc_connections(tables)
     avg_connections = mean(num_sat_with_dict.values())
-    #print "Avg num connections: " + str(avg_connections)
+    if verbose == True:
+        print "Avg num connections: " + str(avg_connections)
     return avg_connections

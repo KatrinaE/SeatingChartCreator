@@ -20,7 +20,7 @@ def times_each_group_sat_together(tables, group_size):
     return times_each_group_sat_together
 
 
-def cost_of_overlaps(tables, group_size):
+def cost_of_overlaps(tables, group_size, verbose=False):
     freq_of_each_grouping = times_each_group_sat_together(tables, group_size)
     tally_of_freqs = []
     for grouping, freq in freq_of_each_grouping.iteritems():
@@ -31,26 +31,25 @@ def cost_of_overlaps(tables, group_size):
         if freq != 1:
             cost += (freq**4 * num_occurrences)
 
-    #if cost > 0:
-        
-        #print ''
-        #print "Number of times a group of " + str(group_size) + " sits together X times: "
-        #display_output(freq_of_freqs)
-        #print "Cost of these overlaps: " + str(cost)
-        #print ''
+    if cost > 0 and verbose == True:
+        print ''
+        print "Number of times a group of " + str(group_size) + " sits together X times: "
+        display_output(freq_of_freqs)
+        print "Cost of these overlaps: " + str(cost)
+        print ''
     return cost
 
-def cf_pairs(tables):
+def cf_pairs(tables, verbose):
     '''cost of pairs sitting together 1, 2, 3, 4, 5 times'''
-    return cost_of_overlaps(tables, 2)
+    return cost_of_overlaps(tables, 2, verbose)
 
-def cf_trios(tables):
+def cf_trios(tables, verbose):
     """ Cost of 3 people sitting together 1, 2, 3, 4, 5 times """
-    return cost_of_overlaps(tables, 3)
+    return cost_of_overlaps(tables, 3, verbose)
 
-def cf_quads(tables):
+def cf_quads(tables, verbose):
     '''cost of 4 people sitting together 1, 2, 3, 4, 5 times'''
-    return cost_of_overlaps(tables, 4)
+    return cost_of_overlaps(tables, 4, verbose)
 
-def cf_overlaps(tables):
-    return cf_pairs(tables) + cf_trios(tables)**3 + cf_quads(tables)**4
+def cf_overlaps(tables, verbose=False):
+    return cf_pairs(tables, verbose) + cf_trios(tables, verbose)**3 + cf_quads(tables, verbose)**4

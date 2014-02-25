@@ -123,14 +123,14 @@ def anneal(init_guess):
     This is an implementation of pseudocode at: 
     https://en.wikipedia.org/wiki/Simulated_annealing#Pseudocode
     """
-    print "The initial cost is " + str(cost_of(init_guess))
+    print "The cost @ start of annealing is " + str(cost_of(init_guess))
     max_acceptable = 0
     curr_state = init_guess
     curr_cost = cost_of(init_guess)
     best_state = init_guess
     best_cost = curr_cost
     T = 1
-    alpha = 0.9
+    alpha = 0.95
     T_min = .001
     while T > T_min and best_cost > max_acceptable:
         i = 1
@@ -161,5 +161,4 @@ def anneal(init_guess):
         T = T*alpha
 
     print "The best cost found is: " + str(best_cost)
-    import ipdb; ipdb.set_trace()
     return best_state
