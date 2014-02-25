@@ -14,23 +14,30 @@ def main(people_csv, tables_csv):
     people = people_objects(people_csv)
     tables = table_objects(tables_csv)
     days = days_list('tables.csv')
-
     i = 0
-    while i < 100:
+    best_cost = float('inf')
+    while i < 10:
         people_copy = deepcopy(people)
         tables_copy = deepcopy(tables)
         init_guess = build_guess(people_copy, tables_copy, days)
-        if config.anneal:
-            final_solution = anneal(init_guess)
-        else:
-            final_solution = init_guess
-        
-        f = open('totally_random_anneal_cost_out.txt', 'a')
-        f.write('\n')
-        f.write(str(cost_of(final_solution)))
+        c = cost_of(init_guess)
+        if c < best_cost: 
+            best_cost = c
+            best_init_sol = solution = init_guess
         i += 1
+        
+    if config.anneal:
+        print "best init cost " + str(best_cost)
+        print "Annealing"
+        solution = anneal(best_init_sol)
+        best_cost = cost_of(solution)
 
-    write_to_csv(final_solution, "output.csv")
+       # f = open('totally_greedy_anneal_cost_out.txt', 'a')
+       # f.write('\n')
+       # f.write(str(c))
+
+    print "Final best cost is: " + str(best_cost)
+    write_to_csv(solution, "output.csv")
     print "************************************"
 
 main('people.csv', 'tables.csv')

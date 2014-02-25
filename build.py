@@ -1,3 +1,4 @@
+import collections
 import heapq
 import random
 from copy import deepcopy
@@ -51,15 +52,30 @@ def get_previous_seatmates(person, tables):
             ids_of_previous_seatmates.extend([p.id for p in table.people if p.id != person.id])
     return ids_of_previous_seatmates
 
-def table_with_fewest_previous_seatmates(tables, ids_of_previous):
+def ordered_by_num_seatmates(tables, ids_of_previous_seatmates):
     h = []
     for table in tables:
         ids_at_table = [person.id for person in table.people]
-        intersection = set(ids_at_table) & set(ids_of_previous)
+        intersection = set(ids_at_table) & set(ids_of_previous_seatmates)
         num_prev_seatmates = len(intersection)
         h.append((num_prev_seatmates, table))
-    best_table = min(h)[1]
-    return best_table
+    h.sort()
+    tables_out = [tup[1] for tup in h]
+    try:
+        # try to return the best 3 tables
+        return tables_out[:2]
+    except:
+        return tables_out
+
+def ordered_by_same_spot(tables, person):
+    persons_tables = collections.Counter([v for (k,v) in person.__dict__.iteritems() if k in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']])
+    l = []
+    for table in tables:
+        tup = (persons_tables[table.name], table)
+        l.append(tup)
+    l.sort()
+    tables_out = [tup[1] for tup in l]
+    return tables_out
 
 def best_table(person, tables, day):
     open_tables = today_only(tables, day)
@@ -67,11 +83,13 @@ def best_table(person, tables, day):
     open_tables = not_full(open_tables)
     if not config.random_start:
         open_tables = cat_not_full(open_tables, person.category)
-        previous_seatmates = get_previous_seatmates(person, tables)
-        table_name = table_with_fewest_previous_seatmates(open_tables, previous_seatmates)
+        ids_of_previous_seatmates = get_previous_seatmates(person, tables)
+        open_tables = ordered_by_num_seatmates(open_tables, ids_of_previous_seatmates)
+        open_tables = ordered_by_same_spot(open_tables, person)
+        best_table = open_tables[0]
     else:
-        table_name = random.choice(open_tables)
-    return table_name
+        best_table = random.choice(open_tables)
+    return best_table
 
 def assign_table(person, tables, day):
     table = best_table(person, tables, day)
