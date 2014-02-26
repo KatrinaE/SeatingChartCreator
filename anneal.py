@@ -1,17 +1,13 @@
-#from math import *
 import math
-
-#from matplotlib.pylab import *
-from collections import Counter
-
-from cost import cost_of
-from seating_io import tables_to_people
 import warnings
 import random
-#from scipy.stats import norm
+import copy
+from collections import Counter
 
 import config
-import copy
+from cost import cost_of
+from seating_io import tables_to_people
+
 
 def acceptance_probability(old_cost, new_cost, T):
     """ Metropolis-Hastings probability function for deciding 

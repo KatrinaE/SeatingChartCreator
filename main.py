@@ -1,9 +1,11 @@
+from copy import deepcopy
+
 import config
 from seating_io import people_objects, table_objects, write_to_csv, days_list
 from build import build_guess
 from anneal import anneal
 from cost import cost_of
-from copy import deepcopy
+
 
 def main(people_csv, tables_csv):
 
@@ -42,4 +44,4 @@ def main(people_csv, tables_csv):
         # f.write(str(c))
         print "************************************"
 
-#main('people.csv', 'tables.csv')
+main('people.csv', 'tables.csv')
