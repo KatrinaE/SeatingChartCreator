@@ -54,23 +54,13 @@ def most_freq_table(person):
     reoccuring_table_tuple = c.most_common(1)[0]
     return reoccuring_table_tuple
     
-def table_switch(person_to_switch, random_person, table_to_switch_from, table_to_switch_to):
-    table_to_switch_from.people.remove(person_to_switch)
-    table_to_switch_from.people.append(random_person)
-    table_to_switch_to.people.remove(random_person)
-    table_to_switch_to.people.append(person_to_switch)
-    setattr(person_to_switch, table_to_switch_from.day, table_to_switch_to.name)
-    setattr(random_person, table_to_switch_from.day, table_to_switch_from.name)
 
-def neighbor(tables):
-    tables_out = copy.deepcopy(tables)
-    people = tables_to_people(tables_out, output_format = 'objects')
-
+def pick_switcher(people, tables):
     if config.random_anneal:
         person_to_switch = random.choice([p for p in people 
                                           if '1' not in p.__dict__.values()])
-        tables_out_to_switch = [x for x in tables_out if (x.day, x.name) 
-                            in person_to_switch.__dict__.items()]
+        tables_out_to_switch = [x for x in tables if (x.day, x.name) 
+                                in person_to_switch.__dict__.items()]
         table_to_switch_from = random.choice(tables_out_to_switch)
 
     else: 
@@ -84,70 +74,86 @@ def neighbor(tables):
             table_to_switch_from = random.choice(bad_table_all_days)
         except:
             import ipdb; ipdb.set_trace()
+    return person_to_switch, table_to_switch_from
 
-    # there is a bug here somewhere. 
-    tables_out_to_switch_to = [t for t in tables_out
+def switcher_destination(tables, table_to_switch_from):
+    tables_to_switch_to = [t for t in tables
                            if t is not table_to_switch_from
                            and t.name is not 'Head'
                            and t.day == table_to_switch_from.day]
-    table_to_switch_to = random.choice(tables_out_to_switch_to)
-    random_person = random.choice(table_to_switch_to.people)
-    table_switch(person_to_switch, random_person, table_to_switch_from, table_to_switch_to)
+    return random.choice(tables_to_switch_to)
+
+def table_switch(person_to_switch, random_person, table_to_switch_from, table_to_switch_to):
+    table_to_switch_from.people.remove(person_to_switch)
+    table_to_switch_from.people.append(random_person)
+    table_to_switch_to.people.remove(random_person)
+    table_to_switch_to.people.append(person_to_switch)
+    setattr(person_to_switch, table_to_switch_from.day, table_to_switch_to.name)
+    setattr(random_person, table_to_switch_from.day, table_to_switch_from.name)
+
+def neighbor(tables):
+    tables_out = copy.deepcopy(tables)
+    people = tables_to_people(tables_out, output_format = 'objects')
+    p_to_switch, t_to_switch_from = pick_switcher(people, tables_out)
+    # there is a bug here somewhere. 
+    t_to_switch_to = switcher_destination(tables_out, t_to_switch_from)
+    random_person = random.choice(t_to_switch_to.people)
+    table_switch(p_to_switch, random_person, t_to_switch_from, t_to_switch_to)
     return tables_out
 
-def temp(iteration, max_iterations):
-    return max_iterations/(iteration+1)**4
+def display_acceptance(ap, r, new_cost, status):
+    if status == "ACCEPT" : 
+        sym = ">"
+    else: 
+        sym = "<"
+    print ''
+    print str(status) + ": " + str(ap) + " " + sym + " > RANDOM: " + str(r)
+    print "new state's cost: " + str(new_cost)
 
-def anneal(init_guess, verbose=False):
+def anneal_at_temp(bstate, bcost, cstate, ccost, T):
+    i = 1
+    while i < config.iterations_per_temp:
+        new_state = neighbor(cstate)
+        new_cost = cost_of(new_state)
+
+        ap = acceptance_probability(ccost, new_cost, T)
+        r = random.random()
+
+        if ap > r:
+            if config.verbose==True:
+                display_acceptance(ap, r, new_cost, "ACCEPT")
+            cstate = new_state
+            ccost = new_cost
+            if ccost < bcost:
+                bstate = cstate
+                bcost = ccost
+                if config.verbose==True:
+                        print "changed best cost to " + str(bcost)
+        else:
+            if config.verbose==True:
+                display_acceptance(ap, r, new_cost, "REJECT")
+        i = i + 1
+    return bstate, bcost, cstate, ccost
+
+def progress_bar(bcost, T):
+    if config.progress_bar:
+        print "T is: " + str(T) + "   Best cost is: " + str(bcost)
+
+def anneal(init_guess):
     """
     Applies a simulated annealing algorithm to improve the generated
     seating chart solution. Similar to vanilla hill climbing, but
     accepts moves to worse states, especially early on, to avoid
     getting trapped at a local maxima.
-    
-    This is an implementation of pseudocode at: 
-    https://en.wikipedia.org/wiki/Simulated_annealing#Pseudocode
     """
-    print "The cost @ start of annealing is " + str(cost_of(init_guess))
-    max_acceptable = 0
-    curr_state = init_guess
-    curr_cost = cost_of(init_guess)
-    best_state = init_guess
-    best_cost = curr_cost
-    T = 1
-    alpha = 0.95
-    T_min = .0001
-    while T > T_min and best_cost > max_acceptable:
-        if True:#verbose:
-            print "T is: " + str(T) + "   Best cost is: " + str(best_cost)
-        i = 1
-        while i < 100:
-            new_state = neighbor(curr_state)
-            new_cost = cost_of(new_state)
+    cstate = bstate = init_guess
+    ccost = bcost = cost_of(init_guess)
+    T = config.T
+    while T > config.T_min and bcost > config.max_acceptable_cost:
+        progress_bar(bcost, T)
+        bstate, bcost, cstate, ccost \
+            = anneal_at_temp(bstate, bcost, cstate, ccost, T)
+        T = T*config.alpha
 
-            ap = acceptance_probability(curr_cost, new_cost, T)
-            r = random.random()
-
-            if ap > r:
-                if verbose==True:
-                    print ''
-                    print "ACCEPT: " + str(ap) + " > RANDOM: " + str(r)
-                    print "new state's cost: " + str(new_cost)
-                curr_state = new_state
-                curr_cost = new_cost
-                if curr_cost < best_cost:
-                    best_state = curr_state
-                    best_cost = curr_cost
-                    if verbose==True:
-                        print "changed best cost to " + str(best_cost)
-
-            else:
-                if verbose==True:
-                    print ''
-                    print "REJECT: " + str(ap) + " < RANDOM: " + str(r)
-                    print "new state's cost: " + str(new_cost)
-            i = i + 1
-        T = T*alpha
-
-    print "The best cost found is: " + str(best_cost)
-    return best_state
+    print "The best cost found is: " + str(bcost)
+    return bstate
