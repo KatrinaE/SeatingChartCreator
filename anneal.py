@@ -13,20 +13,6 @@ import random
 import config
 import copy
 
-"""
-def norm_pdf(z):
-
-    Standard normal pdf (Probability Density Function)
-    
-    pdf is a point value: how dense is the probability at a 
-    given point z? See
-    http://docs.scipy.org/doc/scipy/reference/generated/
-    scipy.stats.norm.html
-
-    prob = norm.pdf(z, scale=1500)
-    return prob
-"""
-    
 def acceptance_probability(old_cost, new_cost, T):
     """ Metropolis-Hastings probability function for deciding 
     whether or not to accept a new solution. Based on code from: 
