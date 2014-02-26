@@ -16,7 +16,7 @@ def main(people_csv, tables_csv):
     days = days_list('tables.csv')
     i = 0
     best_cost = float('inf')
-    while i < 10:
+    while i < 1:
         people_copy = deepcopy(people)
         tables_copy = deepcopy(tables)
         init_guess = build_guess(people_copy, tables_copy, days)

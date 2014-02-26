@@ -146,7 +146,6 @@ def anneal(init_guess, verbose=False):
             ap = acceptance_probability(curr_cost, new_cost, T)
             r = random.random()
 
-
             if ap > r:
                 if verbose==True:
                     print ''
