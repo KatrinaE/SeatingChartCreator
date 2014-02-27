@@ -142,10 +142,9 @@ def anneal(init_guess):
     ccost = bcost = cost_of(init_guess)
     T = config.T
     while T > config.T_min and bcost > config.max_acceptable_cost:
-        progress_bar(bcost, T)
         bstate, bcost, cstate, ccost \
             = anneal_at_temp(bstate, bcost, cstate, ccost, T)
         T = T*config.alpha
-
+        yield bstate, bcost, T
     print "The best cost found is: " + str(bcost)
-    return bstate
+    

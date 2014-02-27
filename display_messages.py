@@ -23,6 +23,6 @@ def display_cost_change(bcost):
         print "changed best cost to " + str(bcost)
 
 
-def display_cost_after_iteration(i, cost):
+def display_result_of_try(i, cost):
     if config.verbose == True:
-        print "Final best cost on iteration " + str(i) + ": " + str(cost)
+        print "Final best cost for try #" + str(i) + ": " + str(cost)
