@@ -5,7 +5,7 @@ from seating_io import people_objects, table_objects, write_to_csv, days_list
 from build import build_guess
 from anneal import anneal
 from cost import cost_of
-from display_messages import display_settings, display_init_cost, display_result_of_try
+from display_messages import display_settings, display_init_cost, display_result_of_try, progress_bar
 
 def main(people_csv, tables_csv):
 
@@ -28,8 +28,8 @@ def main(people_csv, tables_csv):
             x = []
             y = []
             for (bstate, bcost, T) in gen:
-                x.append(T)
-                y.append(bcost)
+                yield bcost, T
+                progress_bar(bcost, T)
                 solution = bstate
         else:
             solution = init_guess

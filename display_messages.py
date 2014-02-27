@@ -22,6 +22,10 @@ def display_cost_change(bcost):
     if config.verbose==True:
         print "changed best cost to " + str(bcost)
 
+def progress_bar(bcost, T):
+    if config.progress_bar:
+        print "T is: " + str(T) + "   Best cost is: " + str(bcost)
+
 
 def display_result_of_try(i, cost):
     if config.verbose == True:
