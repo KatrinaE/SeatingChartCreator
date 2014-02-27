@@ -1,32 +1,30 @@
 from Tkinter import *
 
-class App(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.pack()
+class MyDialog:
 
-        self.entrythingy = Entry()
-        self.entrythingy.pack()
+    def __init__(self, parent):
 
-        # here is the application variable
-        self.contents = StringVar()
-        # set it to some value
-        self.contents.set("this is a variable")
-        # tell the entry widget to watch this variable
-        self.entrythingy["textvariable"] = self.contents
+        top = self.top = Toplevel(parent)
 
-        # and here we get a callback when the user hits return.
-        # we will have the program print out the value of the
-        # application variable when the user hits return
-        self.entrythingy.bind('<Key-Return>',
-                              self.print_contents)
+        Label(top, text="Value").pack()
 
-    def print_contents(self, event):
-        print "hi. contents of entry is now ---->", \
-              self.contents.get()
+        self.e = Entry(top)
+        self.e.pack(padx=5)
+
+        b = Button(top, text="OK", command=self.ok)
+        b.pack(pady=5)
+
+    def ok(self):
+
+        print "value is", self.e.get()
+
+        self.top.destroy()
 
 
 root = Tk()
-app = App(master=root)
-app.mainloop()
-root.destroy()
+Button(root, text="Hello!").pack()
+root.update()
+
+d = MyDialog(root)
+
+root.wait_window(d.top)
