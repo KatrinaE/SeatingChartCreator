@@ -43,4 +43,4 @@ def main(people_csv, tables_csv):
         i += 1
         print "************************************"
 
-main('people.csv', 'tables.csv')
+#main('people.csv', 'tables.csv')
