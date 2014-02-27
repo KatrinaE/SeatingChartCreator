@@ -7,7 +7,7 @@ from collections import Counter
 import config
 from cost import cost_of
 from seating_io import tables_to_people
-
+from display_messages import display_acceptance, display_cost_change
 
 def acceptance_probability(old_cost, new_cost, T):
     """ Metropolis-Hastings probability function for deciding 
@@ -101,15 +101,6 @@ def neighbor(tables):
     table_switch(p_to_switch, random_person, t_to_switch_from, t_to_switch_to)
     return tables_out
 
-def display_acceptance(ap, r, new_cost, status):
-    if status == "ACCEPT" : 
-        sym = ">"
-    else: 
-        sym = "<"
-    print ''
-    print str(status) + ": " + str(ap) + " " + sym + " > RANDOM: " + str(r)
-    print "new state's cost: " + str(new_cost)
-
 def anneal_at_temp(bstate, bcost, cstate, ccost, T):
     i = 1
     while i < config.iterations_per_temp:
@@ -120,18 +111,16 @@ def anneal_at_temp(bstate, bcost, cstate, ccost, T):
         r = random.random()
 
         if ap > r:
-            if config.verbose==True:
-                display_acceptance(ap, r, new_cost, "ACCEPT")
+            display_acceptance(ap, r, new_cost, "ACCEPT")
             cstate = new_state
             ccost = new_cost
             if ccost < bcost:
                 bstate = cstate
                 bcost = ccost
-                if config.verbose==True:
-                        print "changed best cost to " + str(bcost)
+                display_cost_change(bcost)
+                
         else:
-            if config.verbose==True:
-                display_acceptance(ap, r, new_cost, "REJECT")
+            display_acceptance(ap, r, new_cost, "REJECT")
         i = i + 1
     return bstate, bcost, cstate, ccost
 
@@ -145,6 +134,9 @@ def anneal(init_guess):
     seating chart solution. Similar to vanilla hill climbing, but
     accepts moves to worse states, especially early on, to avoid
     getting trapped at a local maxima.
+
+    cstate, ccost = current state & cost
+    bstate, bcost = best state & cost found so far
     """
     cstate = bstate = init_guess
     ccost = bcost = cost_of(init_guess)

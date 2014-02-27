@@ -98,9 +98,7 @@ def assign_table(person, tables, day):
     table_from_person = getattr(person, day)
     table_from_table = [table.name for table in tables if table.day == day and person in table.people][0]
     if table_from_person != table_from_table:
-        print 'new person!'
-        print table_from_person
-        print table_from_table
+        raise RuntimeError("Table list from person and table list from table do not match")
 
 def seat_campers(people, tables, day):
     for person in people:

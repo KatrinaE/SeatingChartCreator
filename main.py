@@ -5,43 +5,36 @@ from seating_io import people_objects, table_objects, write_to_csv, days_list
 from build import build_guess
 from anneal import anneal
 from cost import cost_of
-
+from display_messages import display_settings, display_init_cost, display_cost_after_iteration
 
 def main(people_csv, tables_csv):
 
     print "*************************************"
-    print "config.anneal = " + str(config.anneal)
-    print "config.random_start = " + str(config.random_start)
-    print "config.random_anneal = " + str(config.random_anneal)
+    display_settings()
     people = people_objects(people_csv)
     tables = table_objects(tables_csv)
-    days = days_list('tables.csv')
+    days = days_list(tables_csv)
     i = 0
     best_cost = float('inf')
-    while i < 1:
+    while i < config.num_tries:
         people_copy = deepcopy(people)
         tables_copy = deepcopy(tables)
         init_guess = build_guess(people_copy, tables_copy, days)
-        c = cost_of(init_guess)
-        #if c < best_cost: 
-            #best_cost = c
-            #best_init_sol = solution = init_guess
-        
-        if config.anneal:
-            print "best init cost " + str(c)
-            print "Annealing best init solution"
-            solution = anneal(init_guess)
-            best_cost = cost_of(solution)
+        cost = cost_of(init_guess)
+        display_init_cost(cost)
 
-        print "Final best cost on iteration " + str(i) + ": " + str(cost_of(solution, verbose=True))
+        if config.anneal:
+            solution = anneal(init_guess)
+        else:
+            solution = init_guess
+
+        best_cost = cost_of(solution)
+        display_cost_after_iteration(i, best_cost)
+
         filename = "output" + str(i) + ".csv"
         write_to_csv(solution, filename)
 
         i += 1
-
-        # f = open('totally_greedy_anneal_cost_out.txt', 'a')
-        # f.write('\n')
-        # f.write(str(c))
         print "************************************"
 
 main('people.csv', 'tables.csv')
