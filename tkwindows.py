@@ -9,6 +9,7 @@ import ttk
 import sys
 
 import main2 as backend
+from Temp_animation3 import thingy
 
 class BaseWindow(Frame):
     def __init__(self, parent):
@@ -39,8 +40,11 @@ class BaseWindow(Frame):
                                 command=self.get_tables_filename)
         self.t_button.grid(row=2, column=1)
 
+        # can we make this callback instantiate a new ProgressWindow widget
+        # rather than calling backend.main directly?
+        self.submit_button = ttk.Button(self.parent, text='Generate Seating Chart', command=lambda: thingy(self.p_filename.get(), self.t_filename.get()))
 
-        self.submit_button = ttk.Button(self.parent, text='Generate Seating Chart', command=lambda: backend.main(self.p_filename.get(), self.t_filename.get()))
+#command=lambda: backend.main(self.p_filename.get(), self.t_filename.get()))
         self.submit_button.grid(row=4, column=0)
         
 
@@ -85,9 +89,27 @@ class BaseWindow(Frame):
 
 
 class ProgressWindow(Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, peoples_csv, tables_csv):
         Frame.__init__(self, parent)
         self.parent = parent
+
+        f = plt.figure()
+        plt.axis([0, 1, 0, 30000])
+        plt.ion()
+        plt.show()
+        
+        x = []
+        y = []
+
+        gen = main('people.csv', 'tables.csv')
+        for (bcost, T) in gen:
+            x.append(T)
+            y.append(bcost)
+            plt.scatter(x, y)
+            plt.draw()
+            time.sleep(0.05)
+
+
         
 
 def main():
