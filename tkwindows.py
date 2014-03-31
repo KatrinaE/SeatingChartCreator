@@ -8,7 +8,7 @@ import tkFileDialog
 import ttk
 import sys
 
-import main2 as backend
+import main as backend
 from Temp_animation3 import thingy
 
 class BaseWindow(Frame):
