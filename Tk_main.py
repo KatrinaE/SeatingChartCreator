@@ -9,7 +9,7 @@ import ttk
 import sys
 
 import main as backend
-from Temp_animation3 import thingy
+from Tk_animation import callback
 
 class BaseWindow(Frame):
     def __init__(self, parent):
@@ -42,8 +42,8 @@ class BaseWindow(Frame):
 
         # can we make this callback instantiate a new ProgressWindow widget
         # rather than calling backend.main directly?
-        self.submit_button = ttk.Button(self.parent, text='Generate Seating Chart', command=lambda: thingy(self.p_filename.get(), self.t_filename.get()))
-
+        self.submit_button = ttk.Button(self.parent, text='Generate Seating Chart', command=lambda: callback(self.p_filename.get(), self.t_filename.get()))
+        print 'foo'
 #command=lambda: backend.main(self.p_filename.get(), self.t_filename.get()))
         self.submit_button.grid(row=4, column=0)
         

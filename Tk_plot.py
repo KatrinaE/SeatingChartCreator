@@ -1,6 +1,6 @@
 import config
 
-def thingy(people_csv, tables_csv):
+def callback(people_csv, tables_csv):
     from numpy import arange, sin, pi
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
     from matplotlib.figure import Figure
@@ -24,6 +24,7 @@ def thingy(people_csv, tables_csv):
     x = []
     y = []
 
+    # HACK ALERT! Hard-coded - change before final version
     gen = main('people.csv', 'tables.csv')#people_csv, tables_csv)
     for (bcost, T) in gen:
         iteration = math.log(T)/math.log(config.alpha)
