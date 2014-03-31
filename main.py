@@ -37,6 +37,7 @@ def main(people_csv, tables_csv):
         best_cost = min(best_cost, cost_of(solution))
         display_result_of_try(i, best_cost)
 
+        # Write each try to its own file
         filename = "output" + str(i) + ".csv"
         write_to_csv(solution, filename)
 

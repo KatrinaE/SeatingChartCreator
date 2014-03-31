@@ -17,7 +17,7 @@ def thingy(people_csv, tables_csv):
 
     fig = plt.figure()
     num_iterations = math.log(config.T_min)/math.log(config.alpha)    
-    plt.axis([0, num_iterations, 0, 30000])
+    plt.axis([0, num_iterations, 0, 3000])
     plt.ion()
     plt.show()
 
