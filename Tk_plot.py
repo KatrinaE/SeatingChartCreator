@@ -5,6 +5,7 @@ def callback(people_csv, tables_csv):
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
     from matplotlib.figure import Figure
     import Tkinter as Tk
+    import ttk
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib.animation as animation
@@ -26,6 +27,7 @@ def callback(people_csv, tables_csv):
 
     # HACK ALERT! Hard-coded - change before final version
     gen = main('people.csv', 'tables.csv')#people_csv, tables_csv)
+    """
     for (bcost, T) in gen:
         iteration = math.log(T)/math.log(config.alpha)
         x.append(iteration)
@@ -33,3 +35,4 @@ def callback(people_csv, tables_csv):
         plt.scatter(x, y)
         plt.draw()
         time.sleep(0.05)
+    """
