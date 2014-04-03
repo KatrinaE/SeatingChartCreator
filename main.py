@@ -28,7 +28,7 @@ def main(people_csv, tables_csv):
             x = []
             y = []
             for (bstate, bcost, T) in gen:
-                yield bcost, T
+                yield bstate, bcost, T
                 progress_bar(bcost, T)
                 solution = bstate
         else:
