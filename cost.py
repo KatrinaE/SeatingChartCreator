@@ -6,12 +6,11 @@ from cost_funcs.cf_same_spot import cf_same_spot
 from cost_funcs.cf_table_size import cf_table_size
 
 def cost_of(solution, verbose=False):
-    tables_out = solution
     weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
-    c1 = cf_same_spot(tables_out, verbose)
-    c2 = cf_table_size(tables_out, False)
-    c3 = cf_category_balance(tables_out, verbose)
-    c4 = cf_overlaps(tables_out, verbose)
+    c1 = cf_same_spot(solution, verbose)
+    c2 = cf_table_size(solution, False)
+    c3 = cf_category_balance(solution, verbose)
+    c4 = cf_overlaps(solution, verbose)
     total_cost = weights[1] * c1 + \
                  weights[2] * c2 + \
                  weights[3] * c3 + \

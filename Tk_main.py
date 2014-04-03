@@ -41,18 +41,31 @@ class ResultsFrame(Frame):
     def initialize(self):
         self.frame_header = Label(self, text="Save your results:", fg="gray", \
                                   font=("Optima Italic", 24))
-        self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), pady=(20,10), padx=(10,10))
+        self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), \
+                               pady=(20,10), padx=(10,10))
 
-        self.cost_label = Label(self, text="Best cost so far: ", fg="gray")
-        self.cost_label.grid(row=1, column=0, padx=(10, 10), sticky=(W))
+        self.overlaps_label = Label(self, text="Number of people sitting \n" + \
+                                    "together more than once: ", \
+                                    justify=LEFT, fg="gray")
+        self.overlaps_label.grid(row=2, column=0, sticky=(W), pady=10)
+        self.o = StringVar()
+        self.o_label = Label(self, textvariable=self.o, width=10, \
+                             fg="violet red", font=("Optima bold", 24))
+        self.o_label.grid(row=2, column=1, sticky=(E))
 
-        self.c = StringVar()
-        self.cost_label2 = Label(self, textvariable=self.c, width=10)
-        self.cost_label2.grid(row=1, column=1, sticky=(E))
+        self.same_spot_label = Label(self, text="Number of people sitting \n" + \
+                                     "in the same spot more \nthan once: ", \
+                                     justify=LEFT, fg="gray")
+        self.same_spot_label.grid(row=3, column=0, sticky=(W), pady=10)
+        self.ss = StringVar()
+        self.ss_label = Label(self, textvariable=self.ss, width=10, \
+                             fg="violet red", font=("Optima bold", 24))
+        self.ss_label.grid(row=3, column=1, sticky=(E))
+
 
         self.save_button = Button(self, text='Save Seating Chart', state='disabled',\
                               command=lambda: self.file_save())
-        self.save_button.grid(row=2, column=0, pady=10)
+        self.save_button.grid(row=5, column=0, pady=10)
 
     def file_save(self):
         # default extension is optional, here will add .txt if missin
@@ -63,10 +76,11 @@ class ResultsFrame(Frame):
         
 
 class InputFrame(Frame):
-    def __init__(self, parent, plot_frame, results_frame):
+    def __init__(self, parent, progress_frame, results_frame):
         Frame.__init__(self, parent)
         self.parent = parent
-        self.plot_frame = plot_frame
+        self.progress_frame = progress_frame
+        self.plot_frame = progress_frame.plot_frame
         self.results_frame = results_frame
         self.initialize()
 
@@ -126,8 +140,13 @@ class InputFrame(Frame):
         self.p_button.config(state='disabled')
         self.t_button.config(state='disabled')
 
+        self.progress_frame.plot_frame.title.config(foreground="black")
+        self.progress_frame.plot_frame.shield.grid_forget()
+        self.progress_frame.num_tries_title.config(foreground="black")
+
         self.results_frame.frame_header.config(foreground="black")
-        self.results_frame.cost_label.config(foreground="black")
+        self.results_frame.overlaps_label.config(foreground="black")
+        self.results_frame.same_spot_label.config(foreground="black")
         self.results_frame.save_button.config(state="active")
         self.x = []
         self.y = []
@@ -142,12 +161,10 @@ class InputFrame(Frame):
             solution = msg[0]
             iteration = msg[1]
             cost = msg[2]
-            self.x.append(iteration)
-            self.y.append(cost)
-            ppl.scatter(self.plot_frame.plot, self.x, self.y)
+            quality = 1000-cost # low cost = high quality
+            self.progress_frame.nt.set(int(iteration))
+            self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
             self.plot_frame.canvas.draw()
-
-            self.results_frame.c.set(cost)
             self.parent.after(2500, self.process_queue)
         except Queue.Empty:
             self.parent.after(2500, self.process_queue)
@@ -155,7 +172,7 @@ class InputFrame(Frame):
 
 class PlotFrame(Frame):
     def __init__(self, parent, title_text, axes_scale, color, y_left, y_right, width=500, height=200, bg="white"):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, width=1000, height=5000)
         self.title_text = title_text
         self.axes_scale = axes_scale
         self.color = color
@@ -167,7 +184,7 @@ class PlotFrame(Frame):
     def initialize(self):
         # create title
         self.title_frame = Frame(self)
-        self.title = Label(self.title_frame, text=self.title_text, font=("Optima Italic", 24))
+        self.title = Label(self.title_frame, text=self.title_text, font=("Optima Italic", 24), foreground="gray")
         self.title.grid(row=0, column=0, sticky=(W))
         self.title_frame.grid(row=0, column=0, sticky=(W))
 
@@ -197,8 +214,8 @@ class PlotFrame(Frame):
         self.plotax2.set_ylabel(self.y_right, rotation='horizontal')
  
         distance = 0
-        val = 300
-        rects = self.plot.barh((0), (val), height=1, left=0, linewidth=0, color=self.color)
+        val = 0
+        self.rects = self.plot.barh((0), (val), height=1, left=0, linewidth=0, color=self.color)
 
         self.fig.tight_layout()
 
@@ -208,6 +225,9 @@ class PlotFrame(Frame):
         self.canvas.show()
         self.canvas.get_tk_widget().grid(row=1, column=0, sticky=(N))
 
+        # hide plot until it's needed
+        self.shield = Frame(self, width="6.75i", height="2i", bg="white")
+        self.shield.grid(row=1, column=0)
 
 class InstructionsFrame(Frame):
     def __init__(self, parent, width=500, height=200, bg="white"):
@@ -249,18 +269,19 @@ class ProgressFrame(Frame):
         self.initialize()
 
     def initialize(self):
-        plot_axes = [0, 3000, 0, 1]
+        plot_axes = [0, 1000, 0, 1]
         self.plot_frame = PlotFrame(self, "Quality of Solution", \
                                 plot_axes, "dodgerblue", "Poor", "Perfect")
         self.plot_frame.grid(row=0, column=0, sticky=(N))
         
-        num_tries_title = Label(self, text="Number of Tries Left", \
-                                font=("Optima Italic", 24))
-        num_tries_title.grid(row=1, column=0, sticky=(NW), pady=(20,0))
+        self.num_tries_title = Label(self, text="Number of Tries Left", \
+                                     font=("Optima Italic", 24), fg="gray")
+        self.num_tries_title.grid(row=1, column=0, sticky=(NW), pady=(20,0))
         
-        num_tries = Label(self, text="3402", \
+        self.nt = StringVar()
+        self.num_tries = Label(self, textvariable=self.nt, \
                           font=("Optima Bold", 24), foreground="violet red")
-        num_tries.grid(row=2, column=0, sticky=(S), pady=(20,100))
+        self.num_tries.grid(row=2, column=0, sticky=(S), pady=(20,100))
 
 class ThreadedBackendCall(threading.Thread):
     def __init__(self, queue):
@@ -270,11 +291,15 @@ class ThreadedBackendCall(threading.Thread):
 
     def run(self):
         while not self._stop_req.isSet():
+            max_iterations = math.log(config.T_min)/math.log(config.alpha) \
+                             * config.iterations_per_temp
+            print max_iterations
             gen = backend.main("people.csv", "tables.csv")
             for (solution, cost, T) in gen:
                 if not self._stop_req.isSet():
                     iteration = math.log(T)/math.log(config.alpha)
-                    self.queue.put((solution, iteration, cost))
+                    num_iterations_left = max_iterations - iteration
+                    self.queue.put((solution, num_iterations_left, cost))
                     print self._stop_req.isSet()
                     time.sleep(0.05)
                 else:
@@ -302,7 +327,7 @@ def main():
     results_frame = ResultsFrame(centered_window, progress_frame.plot_frame)
     results_frame.grid(row=2, column=2, padx=10, pady=20, sticky=(N))
 
-    input_frame = InputFrame(centered_window, progress_frame.plot_frame, results_frame)
+    input_frame = InputFrame(centered_window, progress_frame, results_frame)
     input_frame.grid(row=2, column=0, padx=10, pady=20, sticky=(N))
 
 
