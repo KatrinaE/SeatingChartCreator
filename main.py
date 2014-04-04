@@ -6,25 +6,7 @@ from build import build_guess
 from anneal import anneal
 from cost import cost_of
 from display_messages import display_settings, display_init_cost, display_result_of_try, progress_bar
-
-class Solution(object):
-    def __init__(solution):
-        self.solution = solution
-
-        self.same_spot_freqs = cf_same_spot.getfreqs(self.solution)
-        self.cost_of_same_spot = cf_same_spot.cost_of_same_spot(self.same_spot_freqs)
-        # the number refers to the group size
-        self.overlaps2_freqs = cf_overlaps.getfreqs(self.solution, 2)
-        self.overlaps3_freqs = cf_overlaps.getfreqs(self.solution, 3)
-
-        self.cost_of_overlaps = cf_overlaps.cost_of_overlaps(self.overlaps2_freqs) + \
-                                cf_overlaps.cost_of_overlaps(self.overlaps3_freqs)
-
-        self.cost_of_category_balance = cf_category_balance(solution)
-
-        self.cost_of_table_size = cf_table_size(solution)
-
-        self.cost = cost_of(solution)
+from solution import Solution
 
 def main(people_csv, tables_csv):
 
@@ -39,7 +21,8 @@ def main(people_csv, tables_csv):
         people_copy = deepcopy(people)
         tables_copy = deepcopy(tables)
         init_guess = build_guess(people_copy, tables_copy, days)
-        init_cost = cost_of(init_guess)
+        import pdb; pdb.set_trace()
+        init_cost = init_guess.calc_cost()
         display_init_cost(init_cost)
         """
         GUI = False

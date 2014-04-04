@@ -2,7 +2,9 @@ import collections
 import heapq
 import random
 from copy import deepcopy
+
 import config
+from solution import Solution
 
 def today_only(tables, day):
     tables_out = []
@@ -125,4 +127,5 @@ def build_guess(people, tables, all_days):
     for d in all_days:
         random.shuffle(people)
         tables_out = seat_campers(people, tables_out, d)
-    return tables_out
+    guess = Solution(tables_out)
+    return guess
