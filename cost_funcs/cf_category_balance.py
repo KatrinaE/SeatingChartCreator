@@ -17,7 +17,7 @@ def imbalance(table, verbose):
 
     return distance_list
 
-def cf_category_balance(tables, verbose=False):
+def cost(tables, verbose=False):
     """Distance of each table from an optimum balance of professions"""
     cost = 0
     worst_imbalance = 0

@@ -1,4 +1,4 @@
-def cf_table_size(tables, verbose=False):
+def cost(tables, verbose=False):
     """Distance of each table from its capacity"""
     maximum = 0
     cost = 0

@@ -1,6 +1,8 @@
 from collections import Counter
 from itertools import chain, combinations
 
+import config
+
 def display_output(freq_counter):
     for (k,v) in freq_counter.iteritems():
         if k != 1:
@@ -11,6 +13,7 @@ def display_output(freq_counter):
 from operator import mul    # or mul=lambda x,y:x*y
 from fractions import Fraction
 
+# TO DO: Remove alternate implementation
 def nCk(n,k): 
   return int( reduce(mul, (Fraction(n-i, i+1) for i in range(k)), 1) )
 
@@ -78,8 +81,6 @@ def alt_times_each_group_sat_together(tables):
     print cost_of_trios
     return
 
-
-
 def times_each_group_sat_together(tables, group_size):
     """
     times_each_group_sat_together has the form [((id1, id2), count), ]
@@ -92,19 +93,40 @@ def times_each_group_sat_together(tables, group_size):
                                     for table in ids_by_table)))
     return times_each_group_sat_together
 
-
-def cost_of_overlaps(tables, group_size, verbose=False):
+def freqs(tables, group_size):
     freq_of_each_grouping = times_each_group_sat_together(tables, group_size)
     tally_of_freqs = []
     for grouping, freq in freq_of_each_grouping.iteritems():
         tally_of_freqs.append(freq)
     freq_of_freqs = Counter(tally_of_freqs)
+    return freq_of_freqs
+
+# for Solutions object
+def cost(freqs, group_size):
     cost = 0
+    for freq, num_occurrences in freqs.iteritems():
+        if freq != 1:
+            cost += (freq**4 * num_occurrences)
+
+    if cost > 0 and config.verbose == True:
+        print ''
+        print "Number of times a group of " + str(group_size) + " sits together X times: "
+        display_output(freq_of_freqs)
+        print "Cost of these overlaps: " + str(cost)
+        print ''
+    return cost
+    
+
+# for version without solutions object
+
+def cost_of_overlaps(tables, group_size):
+    cost = 0
+    freq_of_freqs = freqs(tables, group_size)
     for freq, num_occurrences in freq_of_freqs.iteritems():
         if freq != 1:
             cost += (freq**4 * num_occurrences)
 
-    if cost > 0 and verbose == True:
+    if cost > 0 and config.verbose == True:
         print ''
         print "Number of times a group of " + str(group_size) + " sits together X times: "
         display_output(freq_of_freqs)
@@ -112,17 +134,17 @@ def cost_of_overlaps(tables, group_size, verbose=False):
         print ''
     return cost
 
-def cf_pairs(tables, verbose):
+def cf_pairs(tables):
     '''cost of pairs sitting together 1, 2, 3, 4, 5 times'''
-    return cost_of_overlaps(tables, 2, verbose)
+    return cost_of_overlaps(tables, 2)
 
-def cf_trios(tables, verbose):
+def cf_trios(tables):
     """ Cost of 3 people sitting together 1, 2, 3, 4, 5 times """
-    return cost_of_overlaps(tables, 3, verbose)
+    return cost_of_overlaps(tables, 3)
 
-def cf_quads(tables, verbose):
+def cf_quads(tables):
     '''cost of 4 people sitting together 1, 2, 3, 4, 5 times'''
-    return cost_of_overlaps(tables, 4, verbose)
+    return cost_of_overlaps(tables, 4)
 
-def cf_overlaps(tables, verbose=False):
-    return cf_pairs(tables, verbose) + cf_trios(tables, verbose)**3 + cf_quads(tables, verbose)**4
+def cf_overlaps(tables):
+    return cf_pairs(tables) + cf_trios(tables)**3 + cf_quads(tables)**4
