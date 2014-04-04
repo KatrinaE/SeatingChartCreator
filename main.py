@@ -4,7 +4,6 @@ import config
 from seating_io import people_objects, table_objects, write_to_csv, days_list
 from build import build_guess
 from anneal import anneal
-from cost import cost_of
 from display_messages import display_settings, display_init_cost, \
     display_result, display_progress_bar
 from solution import Solution

@@ -5,7 +5,6 @@ import copy
 from collections import Counter
 
 import config
-from cost import cost_of
 from seating_io import tables_to_people
 from display_messages import display_acceptance, display_cost_update
 from solution import Solution

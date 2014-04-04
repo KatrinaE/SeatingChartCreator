@@ -2,7 +2,7 @@ anneal = True
 random_start = False
 random_anneal = True#False
 progress_bar = True
-verbose = True
+verbose = False
 super_verbose = False
 
 ### Annealing Settings ###
