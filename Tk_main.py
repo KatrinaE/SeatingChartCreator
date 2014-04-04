@@ -295,11 +295,11 @@ class ThreadedBackendCall(threading.Thread):
                              * config.iterations_per_temp
             print max_iterations
             gen = backend.main("people.csv", "tables.csv")
-            for (solution, cost, T) in gen:
+            for (solution, T) in gen:
                 if not self._stop_req.isSet():
                     iteration = math.log(T)/math.log(config.alpha)
                     num_iterations_left = max_iterations - iteration
-                    self.queue.put((solution, num_iterations_left, cost))
+                    self.queue.put((solution, num_iterations_left, solution.cost))
                     print self._stop_req.isSet()
                     time.sleep(0.05)
                 else:

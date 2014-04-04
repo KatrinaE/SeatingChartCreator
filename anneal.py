@@ -7,7 +7,8 @@ from collections import Counter
 import config
 from cost import cost_of
 from seating_io import tables_to_people
-from display_messages import display_acceptance, display_cost_change
+from display_messages import display_acceptance, display_cost_update
+from solution import Solution
 
 def acceptance_probability(old_cost, new_cost, T):
     """ Metropolis-Hastings probability function for deciding 
@@ -91,7 +92,8 @@ def table_switch(person_to_switch, random_person, table_to_switch_from, table_to
     setattr(person_to_switch, table_to_switch_from.day, table_to_switch_to.name)
     setattr(random_person, table_to_switch_from.day, table_to_switch_from.name)
 
-def neighbor(tables):
+def neighbor(solution):
+    tables = solution.solution
     tables_out = copy.deepcopy(tables)
     people = tables_to_people(tables_out, output_format = 'objects')
     p_to_switch, t_to_switch_from = pick_switcher(people, tables_out)
@@ -99,30 +101,28 @@ def neighbor(tables):
     t_to_switch_to = switcher_destination(tables_out, t_to_switch_from)
     random_person = random.choice(t_to_switch_to.people)
     table_switch(p_to_switch, random_person, t_to_switch_from, t_to_switch_to)
-    return tables_out
+    new_solution = Solution(tables_out)
+    return new_solution
 
-def anneal_at_temp(bstate, bcost, cstate, ccost, T):
+def anneal_at_temp(best_state, current_state, T):
     i = 1
     while i < config.iterations_per_temp:
-        new_state = neighbor(cstate)
-        new_cost = cost_of(new_state)
+        new_state = neighbor(current_state)
 
-        ap = acceptance_probability(ccost, new_cost, T)
+        ap = acceptance_probability(current_state.cost, new_state.cost, T)
         r = random.random()
 
         if ap > r:
-            display_acceptance(ap, r, new_cost, "ACCEPT")
-            cstate = new_state
-            ccost = new_cost
-            if ccost < bcost:
-                bstate = cstate
-                bcost = ccost
-                display_cost_change(bcost)
+            display_acceptance(ap, r, new_state.cost, "ACCEPT")
+            current_state = new_state
+            if current_state.cost < best_state.cost:
+                best_state = current_state
+                display_cost_update(best_state.cost)
                 
         else:
-            display_acceptance(ap, r, new_cost, "REJECT")
+            display_acceptance(ap, r, new_state.cost, "REJECT")
         i = i + 1
-    return bstate, bcost, cstate, ccost
+    return best_state, current_state
 
 
 def anneal(init_guess):
@@ -132,18 +132,16 @@ def anneal(init_guess):
     accepts moves to worse states, especially early on, to avoid
     getting trapped at a local maxima.
 
-    cstate, ccost = current state & cost
-    bstate, bcost = best state & cost found so far
+    current_state, current_state.cost = current state & cost
+    best_state, best_state.cost = best state & cost found so far
     """
-    cstate = bstate = init_guess
-    ccost = bcost = cost_of(init_guess)
+    current_state = best_state = init_guess
     T = config.T
-    while T > config.T_min and bcost > config.max_acceptable_cost:
-        yield bstate, bcost, T
-        bstate, bcost, cstate, ccost \
-            = anneal_at_temp(bstate, bcost, cstate, ccost, T)
+    while T > config.T_min and best_state.cost > config.max_acceptable_cost:
+        yield best_state, T
+        best_state, current_state = anneal_at_temp(best_state, current_state, T)
         T = T*config.alpha
 
-    print "The best cost found is: " + str(bcost)
+    print "The best cost found is: " + str(best_state.cost)
     
-    yield bstate, bcost, T
+    yield best_state, T

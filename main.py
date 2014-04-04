@@ -20,30 +20,29 @@ def main(people_csv, tables_csv):
     while i < config.num_tries:
         people_copy = deepcopy(people)
         tables_copy = deepcopy(tables)
-        init_guess = build_guess(people_copy, tables_copy, days)
-        import pdb; pdb.set_trace()
-        init_cost = init_guess.calc_cost()
-        display_init_cost(init_cost)
-        """
-        GUI = False
-        if config.anneal and GUI == True:
-            gen = anneal(init_guess)
+        init_solution = build_guess(people_copy, tables_copy, days)
+
+        if config.verbose:
+            display_init_cost(init_solution.cost)
+
+        if config.anneal:
+            gen = anneal(init_solution)
             x = []
             y = []
-            for (bstate, bcost, T) in gen:
-                yield bstate, bcost, T
-                progress_bar(bcost, T)
-                solution = bstate
+            for (best_state, T) in gen:
+                yield best_state, T
+                progress_bar(best_state.cost, T)
+                solution = best_state
         else:
-            solution = init_guess
+            solution = init_solution
 
-        best_cost = min(best_cost, cost_of(solution))
-        display_result_of_try(i, best_cost)
+        best_cost = min(best_cost, best_state.cost)
+        display_result_of_try(i, best_state.cost)
 
         # Write each try to its own file
         filename = "output" + str(i) + ".csv"
-        write_to_csv(solution, filename)
-        """
+        write_to_csv(solution.solution, filename)
+
         i += 1
         print "************************************"
 

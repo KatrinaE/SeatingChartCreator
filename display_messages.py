@@ -18,7 +18,7 @@ def display_acceptance(ap, r, new_cost, status):
         print str(status) + ": " + str(ap) + " " + sym + " > RANDOM: " + str(r)
         print "new state's cost: " + str(new_cost)
 
-def display_cost_change(bcost):
+def display_cost_update(bcost):
     if config.verbose==True:
         print "changed best cost to " + str(bcost)
 
