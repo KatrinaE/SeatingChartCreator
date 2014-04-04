@@ -113,19 +113,22 @@ def anneal_at_temp(best_state, current_state, T):
         r = random.random()
 
         if ap > r:
-            display_acceptance(ap, r, new_state.cost, "ACCEPT")
+            if config.super_verbose:
+                display_acceptance(ap, r, new_state.cost, "ACCEPT")
             current_state = new_state
             if current_state.cost < best_state.cost:
                 best_state = current_state
-                display_cost_update(best_state.cost)
+                if config.super_verbose:
+                    display_cost_update(best_state.cost)
                 
         else:
-            display_acceptance(ap, r, new_state.cost, "REJECT")
+            if config.super_verbose:
+                display_acceptance(ap, r, new_state.cost, "REJECT")
         i = i + 1
     return best_state, current_state
 
 
-def anneal(init_guess):
+def anneal(solution):
     """
     Applies a simulated annealing algorithm to improve the generated
     seating chart solution. Similar to vanilla hill climbing, but
@@ -135,7 +138,7 @@ def anneal(init_guess):
     current_state, current_state.cost = current state & cost
     best_state, best_state.cost = best state & cost found so far
     """
-    current_state = best_state = init_guess
+    current_state = best_state = solution
     T = config.T
     while T > config.T_min and best_state.cost > config.max_acceptable_cost:
         yield best_state, T

@@ -111,7 +111,7 @@ def cost(freqs, group_size):
     if cost > 0 and config.verbose == True:
         print ''
         print "Number of times a group of " + str(group_size) + " sits together X times: "
-        display_output(freq_of_freqs)
+        display_output(freqs)
         print "Cost of these overlaps: " + str(cost)
         print ''
     return cost
