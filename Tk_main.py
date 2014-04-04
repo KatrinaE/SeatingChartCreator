@@ -274,7 +274,7 @@ class ProgressFrame(Frame):
                                 plot_axes, "dodgerblue", "Poor", "Perfect")
         self.plot_frame.grid(row=0, column=0, sticky=(N))
         
-        self.num_tries_title = Label(self, text="Number of Tries Left", \
+        self.num_tries_title = Label(self, text="Number of Attempts Made", \
                                      font=("Optima Italic", 24), fg="gray")
         self.num_tries_title.grid(row=1, column=0, sticky=(NW), pady=(20,0))
         
@@ -297,10 +297,8 @@ class ThreadedBackendCall(threading.Thread):
             gen = backend.main("people.csv", "tables.csv")
             for (solution, T) in gen:
                 if not self._stop_req.isSet():
-                    iteration = math.log(T)/math.log(config.alpha)
-                    num_iterations_left = max_iterations - iteration
-                    self.queue.put((solution, num_iterations_left, solution.cost))
-                    print self._stop_req.isSet()
+                    iteration = math.log(T)/math.log(config.alpha)+1
+                    self.queue.put((solution, iteration, solution.cost))
                     time.sleep(0.05)
                 else:
                     raise threading.ThreadError("I killed the thread")
