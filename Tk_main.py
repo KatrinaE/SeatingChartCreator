@@ -33,51 +33,80 @@ import config
 
 class ResultsFrame(Frame):
     def __init__(self, parent, plot_frame):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, bg="white")
         self.parent = parent
         self.plot_frame = plot_frame
         self.initialize()
 
     def initialize(self):
-        self.frame_header = Label(self, text="Save your results:", fg="gray", \
+        self.frame_header = Label(self, text="Solution Metrics:", fg="gray", \
                                   font=("Optima Italic", 24))
         self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), \
-                               pady=(20,10), padx=(10,10))
+                               pady=(20,10))
 
-        self.overlaps_label = Label(self, text="Number of people sitting \n" + \
-                                    "together more than once: ", \
+        self.pairs2_label = Label(self, text="Number of pairs sitting \n" + \
+                                    "together twice: ", \
                                     justify=LEFT, fg="gray")
-        self.overlaps_label.grid(row=2, column=0, sticky=(W), pady=10)
-        self.o = StringVar()
-        self.o_label = Label(self, textvariable=self.o, width=10, \
+        self.pairs2_label.grid(row=2, column=0, sticky=(W), pady=10)
+        self.pairs2_var = StringVar()
+        self.pairs2 = Label(self, textvariable=self.pairs2_var, width=10, \
                              fg="violet red", font=("Optima bold", 24))
-        self.o_label.grid(row=2, column=1, sticky=(E))
+        self.pairs2.grid(row=2, column=1, sticky=(E))
 
-        self.same_spot_label = Label(self, text="Number of people sitting \n" + \
-                                     "in the same spot more \nthan once: ", \
+
+        self.pairs3_label = Label(self, text="Number of pairs sitting \n" + \
+                                    "together three times: ", \
+                                    justify=LEFT, fg="gray")
+        self.pairs3_label.grid(row=3, column=0, sticky=(W), pady=10)
+        self.pairs3_var = StringVar()
+        self.pairs3 = Label(self, textvariable=self.pairs3_var, width=10, \
+                             fg="violet red", font=("Optima bold", 24))
+        self.pairs3.grid(row=3, column=1, sticky=(E))
+
+        self.trios2_label = Label(self, text="Number of trios sitting \n" + \
+                                    "together twice: ", \
+                                    justify=LEFT, fg="gray")
+        #self.trios2_label.grid(row=4, column=0, sticky=(W), pady=10)
+        self.trios2_var = StringVar()
+        self.trios2 = Label(self, textvariable=self.trios2_var, width=10, \
+                             fg="violet red", font=("Optima bold", 24))
+        #self.trios2.grid(row=4, column=1, sticky=(E))
+
+
+
+        self.trios3_label = Label(self, text="Number of trios sitting \n" + \
+                                    "together three times: ", \
+                                    justify=LEFT, fg="gray")
+        #self.trios3_label.grid(row=5, column=0, sticky=(W), pady=10)
+        self.trios3_var = StringVar()
+        self.trios3 = Label(self, textvariable=self.trios3_var, width=10, \
+                             fg="violet red", font=("Optima bold", 24))
+        #self.trios3.grid(row=5, column=1, sticky=(E))
+
+        self.same_spot2_label = Label(self, text="Number of people sitting \n" + \
+                                     "in the same spot twice: ", \
                                      justify=LEFT, fg="gray")
-        self.same_spot_label.grid(row=3, column=0, sticky=(W), pady=10)
-        self.ss = StringVar()
-        self.ss_label = Label(self, textvariable=self.ss, width=10, \
+        self.same_spot2_label.grid(row=6, column=0, sticky=(W), pady=10)
+        self.same_spot2_var = StringVar()
+        self.same_spot2 = Label(self, textvariable=self.same_spot2_var, width=10, \
                              fg="violet red", font=("Optima bold", 24))
-        self.ss_label.grid(row=3, column=1, sticky=(E))
+        self.same_spot2.grid(row=6, column=1, sticky=(E))
 
 
-        self.save_button = Button(self, text='Save Seating Chart', state='disabled',\
-                              command=lambda: self.file_save())
-        self.save_button.grid(row=5, column=0, pady=10)
+        self.same_spot3_label = Label(self, text="Number of people sitting \n" + \
+                                     "in the same spot three times: ", \
+                                     justify=LEFT, fg="gray")
+        self.same_spot3_label.grid(row=7, column=0, sticky=(W), pady=10)
+        self.same_spot3_var = StringVar()
+        self.same_spot3 = Label(self, textvariable=self.same_spot3_var, width=10, \
+                             fg="violet red", font=("Optima bold", 24))
+        self.same_spot3.grid(row=7, column=1, sticky=(E))
 
-    def file_save(self):
-        # default extension is optional, here will add .txt if missin
-        fout = tkFileDialog.asksaveasfile(mode='w', defaultextension=".csv")
-        text2save = "hellooooooo"
-        fout.write(text2save)
-        fout.close()
-        
+
 
 class InputFrame(Frame):
     def __init__(self, parent, progress_frame, results_frame):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, bg="white")
         self.parent = parent
         self.progress_frame = progress_frame
         self.plot_frame = progress_frame.plot_frame
@@ -85,23 +114,23 @@ class InputFrame(Frame):
         self.initialize()
 
     def initialize(self):
-        self.frame_header = Label(self, text="Load your files:", fg="black", \
+        self.frame_header = Label(self, text="Load your files:", foreground="black", \
                                   font=("Optima Italic", 24))
-        self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), pady=(20,10), padx=(10,10))
+        self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), pady=(20,10), padx=(0,0))
 
         self.p_filename = StringVar()
         self.t_filename = StringVar()
 
         # must use lamba - otherwise 'command' executes when the code is loaded,
         # not when the button is pressed
-        self.p_label = ttk.Label(self, textvariable=self.p_filename, width=10)
-        self.p_label.grid(row=1,column=0, sticky=(E))
+        self.p_label = ttk.Label(self, textvariable=self.p_filename, width=20)
+        self.p_label.grid(row=1,column=0, sticky=(W))
         self.p_button = ttk.Button(self, text='Choose People File',\
                                    command=lambda: self.get_filename(self.p_filename))
         self.p_button.grid(row=1, column=1, padx=5, pady=10)
 
-        self.t_label = ttk.Label(self, textvariable=self.t_filename, width=10)
-        self.t_label.grid(row=2, column=0, sticky=(E))
+        self.t_label = ttk.Label(self, textvariable=self.t_filename, width=20)
+        self.t_label.grid(row=2, column=0, sticky=(W))
         self.t_button = ttk.Button(self, text='Choose Tables File',\
                                    command=lambda: self.get_filename(self.t_filename))
         self.t_button.grid(row=2, column=1, padx=5, pady=10)
@@ -118,6 +147,24 @@ class InputFrame(Frame):
                                       command=lambda: self.backend_call.stop())
         self.stop_button.grid(row=6, column=0, columnspan=2, pady=50)
         """
+
+        self.frame_header2 = Label(self, text="Save your results:", fg="gray", \
+                                  font=("Optima Italic", 24))
+        self.frame_header2.grid(row=6, column=0, columnspan=2, sticky=(NW), \
+                               pady=(20,10), padx=(10,10))
+
+        self.save_button = Button(self, text='Save Seating Chart', state='disabled',\
+                              command=lambda: self.file_save())
+        self.save_button.grid(row=7, column=0, pady=10)
+
+    def file_save(self):
+        # default extension is optional, here will add .txt if missin
+        fout = tkFileDialog.asksaveasfile(mode='w', defaultextension=".csv")
+        text2save = "hellooooooo"
+        fout.write(text2save)
+        fout.close()
+        
+
 
     def get_filename(self, filename_var):
         options = dict(defaultextension='.csv',\
@@ -145,9 +192,13 @@ class InputFrame(Frame):
         self.progress_frame.num_tries_title.config(foreground="black")
 
         self.results_frame.frame_header.config(foreground="black")
-        self.results_frame.overlaps_label.config(foreground="black")
-        self.results_frame.same_spot_label.config(foreground="black")
-        self.results_frame.save_button.config(state="active")
+        self.results_frame.pairs2_label.config(foreground="black")
+        self.results_frame.pairs3_label.config(foreground="black")
+        self.results_frame.trios2_label.config(foreground="black")
+        self.results_frame.trios3_label.config(foreground="black")
+        self.results_frame.same_spot2_label.config(foreground="black")
+        self.results_frame.same_spot3_label.config(foreground="black")
+        self.save_button.config(state="active")
         self.x = []
         self.y = []
         self.queue = Queue.Queue()
@@ -165,6 +216,14 @@ class InputFrame(Frame):
             self.progress_frame.nt.set(int(iteration))
             self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
             self.plot_frame.canvas.draw()
+
+            self.results_frame.pairs2_var.set(solution.overlaps2_freqs[2])
+            self.results_frame.pairs3_var.set(solution.overlaps2_freqs[3])
+            self.results_frame.trios2_var.set(solution.overlaps3_freqs[2])
+            self.results_frame.trios3_var.set(solution.overlaps3_freqs[3])
+            self.results_frame.same_spot2_var.set(solution.same_spot_freqs[2])
+            self.results_frame.same_spot3_var.set(solution.same_spot_freqs[3])
+
             self.parent.after(2500, self.process_queue)
         except Queue.Empty:
             self.parent.after(2500, self.process_queue)
@@ -172,7 +231,7 @@ class InputFrame(Frame):
 
 class PlotFrame(Frame):
     def __init__(self, parent, title_text, axes_scale, color, y_left, y_right, width=500, height=200, bg="white"):
-        Frame.__init__(self, parent, width=1000, height=5000)
+        Frame.__init__(self, parent, width=1000, height=5000, bg="white")
         self.title_text = title_text
         self.axes_scale = axes_scale
         self.color = color
@@ -238,7 +297,6 @@ class InstructionsFrame(Frame):
         self.instructions_text = \
     """ 
     Seating Chart Creator makes an optimal seating chart for a given set of people, tables, and days. It generates a random chart, then searches for a better one by switching people around.\n
-    Each time, the 'cost' of the chart is measured and plotted below. The cost will decrease gradually as the program runs; an optimal chart has a cost of 0.\n
     <<CLICK HERE>> to see the list of rules SCC follows.
     <<CLICK HERE>> for an example People input file.
     <<CLICK HERE>> for an example Tables input file.\n"""
@@ -293,7 +351,6 @@ class ThreadedBackendCall(threading.Thread):
         while not self._stop_req.isSet():
             max_iterations = math.log(config.T_min)/math.log(config.alpha) \
                              * config.iterations_per_temp
-            print max_iterations
             gen = backend.main("people.csv", "tables.csv")
             for (solution, T) in gen:
                 if not self._stop_req.isSet():
@@ -320,13 +377,13 @@ def main():
     instructions_frame.grid(row=1, column=0, columnspan=3, sticky=(W), padx=(0,20))
 
     progress_frame = ProgressFrame(centered_window)
-    progress_frame.grid(row=2, column=1)
+    progress_frame.grid(row=2, column=1, padx=10, pady=20, sticky=(N))
 
     results_frame = ResultsFrame(centered_window, progress_frame.plot_frame)
-    results_frame.grid(row=2, column=2, padx=10, pady=20, sticky=(N))
+    results_frame.grid(row=2, column=2, padx=10, sticky=(N))
 
     input_frame = InputFrame(centered_window, progress_frame, results_frame)
-    input_frame.grid(row=2, column=0, padx=10, pady=20, sticky=(N))
+    input_frame.grid(row=2, column=0, padx=10, sticky=(N))
 
 
     """

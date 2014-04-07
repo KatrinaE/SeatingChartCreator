@@ -13,7 +13,6 @@ class Solution(object):
         self.overlaps2_freqs = overlaps.freqs(self.solution, 2)
         self.overlaps3_freqs = overlaps.freqs(self.solution, 3)
         self.same_spot_freqs = same_spot.freqs(self.solution)
-
         # COSTS
         self.cost_of_overlaps = overlaps.cost(self.overlaps2_freqs, 2) + \
                                 overlaps.cost(self.overlaps3_freqs, 3)
