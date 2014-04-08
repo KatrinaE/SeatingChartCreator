@@ -6,8 +6,6 @@ http://sebsauvage.net/python/gui/
 import time
 import math
 import sys
-
-# Threading imports
 import threading
 import Queue
  
@@ -112,6 +110,7 @@ class InputFrame(Frame):
         self.plot_frame = progress_frame.plot_frame
         self.backend_call = None
         self.results_frame = results_frame
+        self.holding_lock = False
         self.initialize()
 
     def initialize(self):
@@ -149,7 +148,7 @@ class InputFrame(Frame):
         self.stop_button.grid(row=6, column=0, columnspan=2, pady=50)
         """
 
-        self.save_header = Label(self, text="Save your results:", fg="gray", \
+        self.save_header = Label(self, text="Save your results:", fg="Gray", \
                                   font=("Optima Italic", 24))
         self.save_header.grid(row=6, column=0, columnspan=2, sticky=(NW), \
                                pady=(20,10), padx=(10,10))
@@ -159,18 +158,32 @@ class InputFrame(Frame):
         self.save_entry = ttk.Entry(self, textvariable=self.save_var, width=20, state='disabled')
         self.save_entry.grid(row=7, column=0, pady=10)
 
-        self.save_button = Button(self, text='Save Seating Chart', state='disabled',\
-                                  command=lambda: write_to_csv(self.solution.solution, self.save_var.get()))
+        self.save_button_var = StringVar()
+        self.save_button_var.set('Save')
+        self.save_button = Button(self, textvariable=self.save_button_var, state='disabled',\
+                                  command=lambda: self.save_file())
         self.save_button.grid(row=7, column=1, pady=10)
 
-    def file_save(self):
-        # default extension is optional, here will add .txt if missin
-        fout = tkFileDialog.asksaveasfile(mode='w', defaultextension=".csv")
-        text2save = "hellooooooo"
-        fout.write(text2save)
-        fout.close()
-        
+        self.pause_var = StringVar()
+        self.pause_var.set('Pause')
+        self.pause_button = Button(self, textvariable=self.pause_var, state='disabled',\
+                                   command=lambda: self.pause_or_resume(), width=20, height=10, pady=10)
+        self.pause_button.grid(row=8, column=0, columnspan=2, pady=0)
 
+    def pause_or_resume(self):
+        # pause
+        if not self.holding_lock:
+            self.backend_call.lock.acquire()
+            self.holding_lock = True
+            self.switch_to_user_input_mode()
+        else:
+            # resume
+            self.backend_call.lock.release()        
+            self.holding_lock = False
+            self.switch_to_calculations_mode()
+
+    def save_file(self):
+        write_to_csv(self.solution.solution, self.save_var.get())
 
     def get_filename(self, filename_var):
         options = dict(defaultextension='.csv',\
@@ -184,12 +197,12 @@ class InputFrame(Frame):
         else:
             print "file not selected"
 
-    # from http://stackoverflow.com/questions/16745507/tkinter-how-to-use-threads-to-preventing-main-event-loop-from-freezing
-    def generate_results(self):
+
+    def switch_to_user_input_mode(self):
         self.submit_button.config(state='disabled')
-        self.frame_header.config(foreground="gray")
-        self.p_entry.config(foreground="gray", state="disabled")
-        self.t_entry.config(foreground="gray", state="disabled")
+        self.frame_header.config(foreground="black")
+        self.p_entry.config(foreground="black", state="disabled")
+        self.t_entry.config(foreground="black", state="disabled")
         self.p_button.config(state='disabled')
         self.t_button.config(state='disabled')
 
@@ -197,9 +210,49 @@ class InputFrame(Frame):
         self.save_entry.config(state='normal')
         self.save_button.config(state="active")
 
+        self.pause_button.config(state="active")
+        self.pause_var.set("Resume")
+
+        self.progress_frame.plot_frame.title.config(foreground="gray")
+        self.progress_frame.plot_frame.shield.grid(row=1, column=0)
+        self.progress_frame.num_tries_title.config(foreground="gray")
+        self.progress_frame.num_tries.config(foreground="gray")
+
+        self.results_frame.frame_header.config(foreground="gray")
+        self.results_frame.pairs2_label.config(foreground="gray")
+        self.results_frame.pairs3_label.config(foreground="gray")
+        self.results_frame.trios2_label.config(foreground="gray")
+        self.results_frame.trios3_label.config(foreground="gray")
+        self.results_frame.same_spot2_label.config(foreground="gray")
+        self.results_frame.same_spot3_label.config(foreground="gray")
+
+        self.results_frame.pairs2.config(foreground="gray")
+        self.results_frame.pairs3.config(foreground="gray")
+        self.results_frame.trios2.config(foreground="gray")
+        self.results_frame.trios3.config(foreground="gray")
+        self.results_frame.same_spot2.config(foreground="gray")
+        self.results_frame.same_spot3.config(foreground="gray")
+
+    def switch_to_calculations_mode(self):
+        self.submit_button.config(state='disabled')
+        self.frame_header.config(foreground="gray")
+        self.p_entry.config(foreground="gray", state="disabled")
+        self.t_entry.config(foreground="gray", state="disabled")
+        self.p_button.config(state='disabled')
+        self.t_button.config(state='disabled')
+
+        self.pause_button.config(state="active")
+        self.pause_var.set("Pause")
+
+        self.save_header.config(foreground="gray")
+        self.save_entry.config(state='disabled')
+        self.save_button.config(state="disabled")
+        self.pause_button.config(state="normal")
+
         self.progress_frame.plot_frame.title.config(foreground="black")
         self.progress_frame.plot_frame.shield.grid_forget()
         self.progress_frame.num_tries_title.config(foreground="black")
+        self.results_frame.num_tries.config(foreground="violet red")
 
         self.results_frame.frame_header.config(foreground="black")
         self.results_frame.pairs2_label.config(foreground="black")
@@ -209,6 +262,17 @@ class InputFrame(Frame):
         self.results_frame.same_spot2_label.config(foreground="black")
         self.results_frame.same_spot3_label.config(foreground="black")
 
+
+        self.results_frame.pairs2.config(foreground="violet red")
+        self.results_frame.pairs3.config(foreground="violet red")
+        self.results_frame.trios2.config(foreground="violet red")
+        self.results_frame.trios3.config(foreground="violet red")
+        self.results_frame.same_spot2.config(foreground="violet red")
+        self.results_frame.same_spot3.config(foreground="violet red")
+
+    # from http://stackoverflow.com/questions/16745507/tkinter-how-to-use-threads-to-preventing-main-event-loop-from-freezing
+    def generate_results(self):
+        self.switch_to_calculations_mode()
         self.queue = Queue.Queue()
         self.backend_call = ThreadedBackendCall(self.queue)
         self.backend_call.start()
@@ -355,6 +419,7 @@ class ThreadedBackendCall(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self._stop_req = threading.Event()
+        self.lock = threading.Lock()
         self.queue = queue
 
     def run(self):
@@ -365,8 +430,10 @@ class ThreadedBackendCall(threading.Thread):
             if self._stop_req.is_set():
                 break
             elif not self._stop_req.is_set():
+                self.lock.acquire()
                 iteration = math.log(T)/math.log(config.alpha)+1
                 self.queue.put((solution, iteration, solution.cost))
+                self.lock.release()
                 time.sleep(0.05)
         self.queue.put("Task finished")
         self.stop()
