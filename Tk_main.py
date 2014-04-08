@@ -47,8 +47,9 @@ class ResultsFrame(Frame):
                                     justify=LEFT, fg="gray")
         self.pairs2_label.grid(row=2, column=0, sticky=(W), pady=10)
         self.pairs2_var = StringVar()
+        self.pairs2_var.set('__')
         self.pairs2 = Label(self, textvariable=self.pairs2_var, width=10, \
-                             fg="violet red", font=("Optima bold", 24))
+                             fg="gray", font=("Optima bold", 24))
         self.pairs2.grid(row=2, column=1, sticky=(E))
 
 
@@ -57,8 +58,9 @@ class ResultsFrame(Frame):
                                     justify=LEFT, fg="gray")
         self.pairs3_label.grid(row=3, column=0, sticky=(W), pady=10)
         self.pairs3_var = StringVar()
+        self.pairs3_var.set('__')
         self.pairs3 = Label(self, textvariable=self.pairs3_var, width=10, \
-                             fg="violet red", font=("Optima bold", 24))
+                             fg="gray", font=("Optima bold", 24))
         self.pairs3.grid(row=3, column=1, sticky=(E))
 
         self.trios2_label = Label(self, text="Number of trios sitting \n" + \
@@ -66,8 +68,9 @@ class ResultsFrame(Frame):
                                     justify=LEFT, fg="gray")
         #self.trios2_label.grid(row=4, column=0, sticky=(W), pady=10)
         self.trios2_var = StringVar()
+        self.trios2_var.set('__')
         self.trios2 = Label(self, textvariable=self.trios2_var, width=10, \
-                             fg="violet red", font=("Optima bold", 24))
+                             fg="gray", font=("Optima bold", 24))
         #self.trios2.grid(row=4, column=1, sticky=(E))
 
 
@@ -77,8 +80,9 @@ class ResultsFrame(Frame):
                                     justify=LEFT, fg="gray")
         #self.trios3_label.grid(row=5, column=0, sticky=(W), pady=10)
         self.trios3_var = StringVar()
+        self.trios3_var.set('__')
         self.trios3 = Label(self, textvariable=self.trios3_var, width=10, \
-                             fg="violet red", font=("Optima bold", 24))
+                             fg="gray", font=("Optima bold", 24))
         #self.trios3.grid(row=5, column=1, sticky=(E))
 
         self.same_spot2_label = Label(self, text="Number of people sitting \n" + \
@@ -86,8 +90,9 @@ class ResultsFrame(Frame):
                                      justify=LEFT, fg="gray")
         self.same_spot2_label.grid(row=6, column=0, sticky=(W), pady=10)
         self.same_spot2_var = StringVar()
+        self.same_spot2_var.set('__')
         self.same_spot2 = Label(self, textvariable=self.same_spot2_var, width=10, \
-                             fg="violet red", font=("Optima bold", 24))
+                             fg="gray", font=("Optima bold", 24))
         self.same_spot2.grid(row=6, column=1, sticky=(E))
 
 
@@ -96,10 +101,10 @@ class ResultsFrame(Frame):
                                      justify=LEFT, fg="gray")
         self.same_spot3_label.grid(row=7, column=0, sticky=(W), pady=10)
         self.same_spot3_var = StringVar()
+        self.same_spot3_var.set('__')
         self.same_spot3 = Label(self, textvariable=self.same_spot3_var, width=10, \
-                             fg="violet red", font=("Optima bold", 24))
+                             fg="gray", font=("Optima bold", 24))
         self.same_spot3.grid(row=7, column=1, sticky=(E))
-
 
 
 class InputFrame(Frame):
@@ -138,15 +143,6 @@ class InputFrame(Frame):
         self.submit_button = ttk.Button(self, text='Generate Seating Chart', \
                                         command=lambda: self.generate_results())
         self.submit_button.grid(row=4, column=0, columnspan=2, pady=10)
-        """
-        self.quit_button = ttk.Button(self, text='Quit',\
-                                      command=sys.exit)
-        self.quit_button.grid(row=5, column=0, columnspan=2, pady=50)
-
-        self.stop_button = ttk.Button(self, text='Quit',\
-                                      command=lambda: self.backend_call.stop())
-        self.stop_button.grid(row=6, column=0, columnspan=2, pady=50)
-        """
 
         self.save_header = Label(self, text="Save your results:", fg="Gray", \
                                   font=("Optima Italic", 24))
@@ -168,19 +164,32 @@ class InputFrame(Frame):
         self.pause_var.set('Pause')
         self.pause_button = Button(self, textvariable=self.pause_var, state='disabled',\
                                    command=lambda: self.pause_or_resume(), width=20, height=10, pady=10)
-        self.pause_button.grid(row=8, column=0, columnspan=2, pady=0)
+        self.pause_button.grid(row=8, column=1, pady=0)
+
+        self.reset_button = Button(self, text="Reset", state='disabled', \
+                                   command = lambda:self.reset(), width=20, \
+                                   height=10, pady=10)
+        self.reset_button.grid(row=8, column=0)
 
     def pause_or_resume(self):
-        # pause
-        if not self.holding_lock:
+        if not self.holding_lock: 
+            # pause
+            self.switch_to_output_mode()
             self.backend_call.lock.acquire()
             self.holding_lock = True
-            self.switch_to_user_input_mode()
         else:
             # resume
+            self.switch_to_calculations_mode()
             self.backend_call.lock.release()        
             self.holding_lock = False
-            self.switch_to_calculations_mode()
+
+    def reset(self):
+        if self.holding_lock:
+            self.backend_call.lock.release()
+            self.holding_lock = False
+        self.backend_call.stop()
+        self.backend_call.join()
+        self.switch_to_input_mode()
 
     def save_file(self):
         write_to_csv(self.solution.solution, self.save_var.get())
@@ -198,9 +207,56 @@ class InputFrame(Frame):
             print "file not selected"
 
 
-    def switch_to_user_input_mode(self):
-        self.submit_button.config(state='disabled')
+    def switch_to_input_mode(self):
+        self.submit_button.config(state='active')
         self.frame_header.config(foreground="black")
+        self.p_entry.config(foreground="black", state="active")
+        self.t_entry.config(foreground="black", state="active")
+        self.p_button.config(state='active')
+        self.t_button.config(state='active')
+
+        self.save_header.config(foreground="gray")
+        self.save_entry.config(state='disabled')
+        self.save_button.config(state="disabled")
+
+        self.pause_button.config(state="disabled")
+        self.pause_var.set("Pause")
+        self.reset_button.config(state="disabled")
+
+        self.progress_frame.plot_frame.title.config(foreground="gray")
+        self.progress_frame.plot_frame.shield.grid(row=1, column=0)
+        self.progress_frame.num_tries_title.config(foreground="gray")
+        self.progress_frame.num_tries.config(foreground="white")
+        self.progress_frame.num_tries_var.set('__')
+
+        self.results_frame.frame_header.config(foreground="gray")
+        self.results_frame.pairs2_label.config(foreground="gray")
+        self.results_frame.pairs3_label.config(foreground="gray")
+        self.results_frame.trios2_label.config(foreground="gray")
+        self.results_frame.trios3_label.config(foreground="gray")
+        self.results_frame.same_spot2_label.config(foreground="gray")
+        self.results_frame.same_spot3_label.config(foreground="gray")
+
+        self.results_frame.pairs2.config(foreground="white")
+        self.results_frame.pairs3.config(foreground="white")
+        self.results_frame.trios2.config(foreground="white")
+        self.results_frame.trios3.config(foreground="white")
+        self.results_frame.same_spot2.config(foreground="white")
+        self.results_frame.same_spot3.config(foreground="white")
+
+        self.results_frame.pairs2_var.set('__')
+        self.results_frame.pairs3_var.set('__')
+        self.results_frame.trios2_var.set('__')
+        self.results_frame.trios3_var.set('__')
+        self.results_frame.same_spot2_var.set('__')
+        self.results_frame.same_spot3_var.set('__')
+
+        self.plot_frame.rects = self.plot_frame.plot.barh((0), (1000), height=1, left=0, linewidth=0, color='white')
+        self.plot_frame.canvas.draw()
+ 
+    def switch_to_output_mode(self):
+        self.submit_button.config(state='disabled')
+        self.frame_header.config(foreground="gray")
         self.p_entry.config(foreground="black", state="disabled")
         self.t_entry.config(foreground="black", state="disabled")
         self.p_button.config(state='disabled')
@@ -212,6 +268,7 @@ class InputFrame(Frame):
 
         self.pause_button.config(state="active")
         self.pause_var.set("Resume")
+        self.reset_button.config(state="active")
 
         self.progress_frame.plot_frame.title.config(foreground="gray")
         self.progress_frame.plot_frame.shield.grid(row=1, column=0)
@@ -243,16 +300,17 @@ class InputFrame(Frame):
 
         self.pause_button.config(state="active")
         self.pause_var.set("Pause")
+        self.pause_button.config(state="normal")
+        self.reset_button.config(state="active")
 
         self.save_header.config(foreground="gray")
         self.save_entry.config(state='disabled')
         self.save_button.config(state="disabled")
-        self.pause_button.config(state="normal")
 
         self.progress_frame.plot_frame.title.config(foreground="black")
         self.progress_frame.plot_frame.shield.grid_forget()
         self.progress_frame.num_tries_title.config(foreground="black")
-        self.results_frame.num_tries.config(foreground="violet red")
+        self.progress_frame.num_tries.config(foreground="violet red")
 
         self.results_frame.frame_header.config(foreground="black")
         self.results_frame.pairs2_label.config(foreground="black")
@@ -288,7 +346,7 @@ class InputFrame(Frame):
                 iteration = msg[1]
                 cost = msg[2]
                 quality = 1000-cost # low cost = high quality
-                self.progress_frame.nt.set(int(iteration))
+                self.progress_frame.num_tries_var.set(int(iteration))
                 self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
                 self.plot_frame.canvas.draw()
 
@@ -410,9 +468,10 @@ class ProgressFrame(Frame):
                                      font=("Optima Italic", 24), fg="gray")
         self.num_tries_title.grid(row=1, column=0, sticky=(NW), pady=(20,0))
         
-        self.nt = StringVar()
-        self.num_tries = Label(self, textvariable=self.nt, \
-                          font=("Optima Bold", 24), foreground="violet red")
+        self.num_tries_var = StringVar()
+        self.num_tries_var.set('__')
+        self.num_tries = Label(self, textvariable=self.num_tries_var, \
+                          font=("Optima Bold", 24), foreground="gray")
         self.num_tries.grid(row=2, column=0, sticky=(S), pady=(20,100))
 
 class ThreadedBackendCall(threading.Thread):
