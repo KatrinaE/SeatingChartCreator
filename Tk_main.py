@@ -29,7 +29,7 @@ from prettyplotlib import brewer2mpl
 # Seating Chart Creator imports
 import main as backend
 import config
-        
+from seating_io import write_to_csv        
 
 class ResultsFrame(Frame):
     def __init__(self, parent, plot_frame):
@@ -110,6 +110,7 @@ class InputFrame(Frame):
         self.parent = parent
         self.progress_frame = progress_frame
         self.plot_frame = progress_frame.plot_frame
+        self.backend_call = None
         self.results_frame = results_frame
         self.initialize()
 
@@ -123,14 +124,14 @@ class InputFrame(Frame):
 
         # must use lamba - otherwise 'command' executes when the code is loaded,
         # not when the button is pressed
-        self.p_label = ttk.Label(self, textvariable=self.p_filename, width=20)
-        self.p_label.grid(row=1,column=0, sticky=(W))
+        self.p_entry = ttk.Entry(self, textvariable=self.p_filename, width=20)
+        self.p_entry.grid(row=1,column=0, sticky=(W))
         self.p_button = ttk.Button(self, text='Choose People File',\
                                    command=lambda: self.get_filename(self.p_filename))
         self.p_button.grid(row=1, column=1, padx=5, pady=10)
 
-        self.t_label = ttk.Label(self, textvariable=self.t_filename, width=20)
-        self.t_label.grid(row=2, column=0, sticky=(W))
+        self.t_entry = ttk.Entry(self, textvariable=self.t_filename, width=20)
+        self.t_entry.grid(row=2, column=0, sticky=(W))
         self.t_button = ttk.Button(self, text='Choose Tables File',\
                                    command=lambda: self.get_filename(self.t_filename))
         self.t_button.grid(row=2, column=1, padx=5, pady=10)
@@ -148,14 +149,19 @@ class InputFrame(Frame):
         self.stop_button.grid(row=6, column=0, columnspan=2, pady=50)
         """
 
-        self.frame_header2 = Label(self, text="Save your results:", fg="gray", \
+        self.save_header = Label(self, text="Save your results:", fg="gray", \
                                   font=("Optima Italic", 24))
-        self.frame_header2.grid(row=6, column=0, columnspan=2, sticky=(NW), \
+        self.save_header.grid(row=6, column=0, columnspan=2, sticky=(NW), \
                                pady=(20,10), padx=(10,10))
 
+        self.save_var = StringVar()
+        self.save_var.set('output.csv')
+        self.save_entry = ttk.Entry(self, textvariable=self.save_var, width=20, state='disabled')
+        self.save_entry.grid(row=7, column=0, pady=10)
+
         self.save_button = Button(self, text='Save Seating Chart', state='disabled',\
-                              command=lambda: self.file_save())
-        self.save_button.grid(row=7, column=0, pady=10)
+                                  command=lambda: write_to_csv(self.solution.solution, self.save_var.get()))
+        self.save_button.grid(row=7, column=1, pady=10)
 
     def file_save(self):
         # default extension is optional, here will add .txt if missin
@@ -182,10 +188,14 @@ class InputFrame(Frame):
     def generate_results(self):
         self.submit_button.config(state='disabled')
         self.frame_header.config(foreground="gray")
-        self.p_label.config(foreground="gray")
-        self.t_label.config(foreground="gray")
+        self.p_entry.config(foreground="gray", state="disabled")
+        self.t_entry.config(foreground="gray", state="disabled")
         self.p_button.config(state='disabled')
         self.t_button.config(state='disabled')
+
+        self.save_header.config(foreground="black")
+        self.save_entry.config(state='normal')
+        self.save_button.config(state="active")
 
         self.progress_frame.plot_frame.title.config(foreground="black")
         self.progress_frame.plot_frame.shield.grid_forget()
@@ -198,9 +208,7 @@ class InputFrame(Frame):
         self.results_frame.trios3_label.config(foreground="black")
         self.results_frame.same_spot2_label.config(foreground="black")
         self.results_frame.same_spot3_label.config(foreground="black")
-        self.save_button.config(state="active")
-        self.x = []
-        self.y = []
+
         self.queue = Queue.Queue()
         self.backend_call = ThreadedBackendCall(self.queue)
         self.backend_call.start()
@@ -209,22 +217,24 @@ class InputFrame(Frame):
     def process_queue(self):
         try:
             msg = self.queue.get(0)
-            solution = msg[0]
-            iteration = msg[1]
-            cost = msg[2]
-            quality = 1000-cost # low cost = high quality
-            self.progress_frame.nt.set(int(iteration))
-            self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
-            self.plot_frame.canvas.draw()
+            if msg == "Task finished":
+                self.backend_call = None
+            else:
+                self.solution = msg[0]
+                iteration = msg[1]
+                cost = msg[2]
+                quality = 1000-cost # low cost = high quality
+                self.progress_frame.nt.set(int(iteration))
+                self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
+                self.plot_frame.canvas.draw()
 
-            self.results_frame.pairs2_var.set(solution.overlaps2_freqs[2])
-            self.results_frame.pairs3_var.set(solution.overlaps2_freqs[3])
-            self.results_frame.trios2_var.set(solution.overlaps3_freqs[2])
-            self.results_frame.trios3_var.set(solution.overlaps3_freqs[3])
-            self.results_frame.same_spot2_var.set(solution.same_spot_freqs[2])
-            self.results_frame.same_spot3_var.set(solution.same_spot_freqs[3])
-
-            self.parent.after(2500, self.process_queue)
+                self.results_frame.pairs2_var.set(self.solution.overlaps2_freqs[2])
+                self.results_frame.pairs3_var.set(self.solution.overlaps2_freqs[3])
+                self.results_frame.trios2_var.set(self.solution.overlaps3_freqs[2])
+                self.results_frame.trios3_var.set(self.solution.overlaps3_freqs[3])
+                self.results_frame.same_spot2_var.set(self.solution.same_spot_freqs[2])
+                self.results_frame.same_spot3_var.set(self.solution.same_spot_freqs[3])
+                self.parent.after(2500, self.process_queue)
         except Queue.Empty:
             self.parent.after(2500, self.process_queue)
 
@@ -348,25 +358,33 @@ class ThreadedBackendCall(threading.Thread):
         self.queue = queue
 
     def run(self):
-        while not self._stop_req.isSet():
-            max_iterations = math.log(config.T_min)/math.log(config.alpha) \
-                             * config.iterations_per_temp
-            gen = backend.main("people.csv", "tables.csv")
-            for (solution, T) in gen:
-                if not self._stop_req.isSet():
-                    iteration = math.log(T)/math.log(config.alpha)+1
-                    self.queue.put((solution, iteration, solution.cost))
-                    time.sleep(0.05)
-                else:
-                    raise threading.ThreadError("I killed the thread")
-            self.queue.put("Task finished")
+        max_iterations = math.log(config.T_min)/math.log(config.alpha) \
+                         * config.iterations_per_temp
+        gen = backend.main("people.csv", "tables.csv")
+        for (solution, T) in gen:
+            if self._stop_req.is_set():
+                break
+            elif not self._stop_req.is_set():
+                iteration = math.log(T)/math.log(config.alpha)+1
+                self.queue.put((solution, iteration, solution.cost))
+                time.sleep(0.05)
+        self.queue.put("Task finished")
+        self.stop()
 
     def stop(self):
-        print 'stopping'
         self._stop_req.set();
 
 def main():
+
+    # helper method used when quitting program
+    def kill_all_threads():
+        if input_frame.backend_call is not None:
+            input_frame.backend_call.stop()
+            input_frame.backend_call.join()
+        root.destroy()
+
     root = Tk()
+    root.wm_protocol ("WM_DELETE_WINDOW", kill_all_threads)
     centered_window = Frame(root)
     centered_window.pack()
 
