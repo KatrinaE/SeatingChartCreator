@@ -66,7 +66,7 @@ def pick_switcher(people, tables):
     else: 
         person_to_switch = saddest_person(people)
         bad_table_tuple = most_freq_table(person_to_switch)
-        bad_table_all_days = [t for t in tables_out
+        bad_table_all_days = [t for t in tables
                              if t.name == bad_table_tuple[0]
                               and t.name != '1'
                              and person_to_switch in t.people]
@@ -79,9 +79,14 @@ def pick_switcher(people, tables):
 def switcher_destination(tables, table_to_switch_from):
     tables_to_switch_to = [t for t in tables
                            if t is not table_to_switch_from
-                           and t.name is not 'Head'
+                           and t.name != 'Head'
+                           and t.name != '1'
                            and t.day == table_to_switch_from.day]
-    return random.choice(tables_to_switch_to)
+    x = random.choice(tables_to_switch_to)
+    y = [x.name for x in tables_to_switch_to if x.name == 'Head' or x.name == '1']
+    if y:
+        import pdb; pdb.set_trace()
+    return x
 
 def table_switch(person_to_switch, random_person, table_to_switch_from, table_to_switch_to):
     table_to_switch_from.people.remove(person_to_switch)
@@ -145,5 +150,11 @@ def anneal(solution):
         T = T*config.alpha
 
     print "The best cost found is: " + str(best_state.cost)
+    print "The state info is: "
+    print "Pairs overlapping: " + str(best_state.overlaps2_freqs)
+    print "Trios overlapping: " + str(best_state.overlaps3_freqs)
+    print "Same spots: " + str(best_state.same_spot_freqs)
+    print "Category balance: " + str(best_state.cost_of_category_balance)
+    print "Table size: " + str(best_state.cost_of_table_size)
     
     yield best_state, T
