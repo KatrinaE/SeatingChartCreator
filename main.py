@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 import config
-from seating_io import people_objects, table_objects, write_to_csv, days_list
+from seating_io import people_objects, table_objects, write_to_csv_2, days_list
 from build import build_guess
 from anneal import anneal
 from display_messages import display_settings, display_init_cost, \
@@ -35,7 +35,7 @@ def main(people_csv, tables_csv):
 
     # Write to file
     filename = "output.csv"
-    write_to_csv(best_solution.solution, filename)
+    write_to_csv_2(all_time_greatest.solution, days, filename)
 
     if config.verbose:
         display_result(best_solution.cost)

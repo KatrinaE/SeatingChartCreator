@@ -87,3 +87,23 @@ def write_to_csv(tables, filename):
     for p in people:
         csvwriter.writerow(p)
     output_file.close()
+
+def write_to_csv_2(tables, days, filename):
+    all_tables = {}
+    for table in tables:
+        all_tables[table.name] = { 'Name' : table.name}
+        for day in days:
+            all_tables[table.name][day] = None
+    for table in tables:
+            people_list = [' '.join((p.first_name, p.last_name)) for p in table.people]
+            all_tables[table.name][table.day] = ', '.join([p for p in people_list])
+    all_out = []
+    for (k, v) in all_tables.iteritems():
+            all_out.append(v)
+
+    fieldnames = ['Name','Mon','Tue','Wed','Thu','Fri']
+    with open(filename,'wb') as file:
+        csvwriter = csv.DictWriter(file, dialect='excel', delimiter=',', quoting=csv.QUOTE_ALL, fieldnames=fieldnames)
+        csvwriter.writerow(dict((fn,fn) for fn in fieldnames))
+        for table in all_out:
+            csvwriter.writerow(table)
