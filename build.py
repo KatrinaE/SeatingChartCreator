@@ -1,7 +1,6 @@
 import collections
 import heapq
 import random
-from copy import deepcopy
 
 import config
 from solution import Solution

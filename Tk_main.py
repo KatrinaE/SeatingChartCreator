@@ -350,6 +350,11 @@ class InputFrame(Frame):
                 self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
                 self.plot_frame.canvas.draw()
 
+                self.plot_frame.rects = self.plot_frame.plot.barh\
+                                        ((0), (quality), height=1, left=0, \
+                                         linewidth=0, color=self.plot_frame.color)
+                self.plot_frame.canvas.draw()
+                self.progress_frame.num_tries_var.set(int(iteration))
                 self.results_frame.pairs2_var.set(self.solution.overlaps2_freqs[2])
                 self.results_frame.pairs3_var.set(self.solution.overlaps2_freqs[3])
                 self.results_frame.trios2_var.set(self.solution.overlaps3_freqs[2])

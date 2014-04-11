@@ -1,9 +1,10 @@
 import time
 from ..seating_io import people_objects, table_objects, days_list
 from ..build import build_guess
-from cf_category_balance import cf_category_balance
+from cf_category_balance import cost
 from cf_same_spot import cf_same_spot
-from cf_overlaps import cf_overlaps, alt_times_each_group_sat_together
+# turning this off for now because there's no more function with this name
+#from cf_overlaps import cf_overlaps, alt_times_each_group_sat_together
 
 def get_random_solution():
     people = people_objects('seating/people.csv')
@@ -19,7 +20,7 @@ def timing(func):
     func(sol)
     print time.time() - t0
 
-timing(alt_times_each_group_sat_together)
+#timing(alt_times_each_group_sat_together)
 timing(cf_category_balance)
 timing(cf_same_spot)
-timing(cf_overlaps)
+#timing(cf_overlaps)
