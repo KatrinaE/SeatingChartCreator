@@ -251,7 +251,7 @@ class InputFrame(Frame):
         self.results_frame.same_spot2_var.set('__')
         self.results_frame.same_spot3_var.set('__')
 
-        self.plot_frame.rects = self.plot_frame.plot.barh((0), (1000), height=1, left=0, linewidth=0, color='white')
+        self.plot_frame.rects = self.plot_frame.plot.barh((0), (3000), height=1, left=0, linewidth=0, color='white')
         self.plot_frame.canvas.draw()
  
     def switch_to_output_mode(self):
@@ -345,7 +345,7 @@ class InputFrame(Frame):
                 self.solution = msg[0]
                 iteration = msg[1]
                 cost = msg[2]
-                quality = 1000-cost # low cost = high quality
+                quality = 3000-cost # low cost = high quality
                 self.progress_frame.num_tries_var.set(int(iteration))
                 self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
                 self.plot_frame.canvas.draw()
@@ -459,7 +459,7 @@ class ProgressFrame(Frame):
         self.initialize()
 
     def initialize(self):
-        plot_axes = [0, 1000, 0, 1]
+        plot_axes = [0, 3000, 0, 1]
         self.plot_frame = PlotFrame(self, "Quality of Solution", \
                                 plot_axes, "dodgerblue", "Poor", "Perfect")
         self.plot_frame.grid(row=0, column=0, sticky=(N))
