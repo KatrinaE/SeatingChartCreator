@@ -489,7 +489,7 @@ class ThreadedBackendCall(threading.Thread):
     def run(self):
         max_iterations = math.log(config.T_min)/math.log(config.alpha) \
                          * config.iterations_per_temp
-        gen = backend.main("people.csv", "tables.csv")
+        gen = backend.main_gui("people.csv", "tables.csv")
         for (solution, T) in gen:
             if self._stop_req.is_set():
                 break
