@@ -101,30 +101,35 @@ def assign_table(person, tables, day):
     if table_from_person != table_from_table:
         raise RuntimeError("Table list from person and table list from table do not match")
 
-def seat_campers(people, tables, day):
+def seat_people(people, tables, day):
     for person in people:
-        if getattr(person, day) is '':
+        table_name = getattr(person, day)
+        if table_name is '':
             assign_table(person, tables, day)
     return tables
 
-def seat_person_at_table(table, person):
-    table.people.append(person)
-    return table
+def populate_preassigned_tables(people, tables, days):
+    for person in people:
+        for day in days:
+            table_name = getattr(person, day)
+            if table_name != '':
+                try: 
+                    table = [t for t in tables \
+                             if t.name == table_name and t.day == day][0]
+                except IndexError:
+                    import pdb; pdb.set_trace()
 
-def populate_head_table(tables, people):
-    all_head_tables = (t for t in tables if t.name == "Head")
-    for head_table in all_head_tables:
-        day = head_table.day
-        for person in people:
-            # Hack Alert! Hard-coded
-            if getattr(person, day) == '1':
-                head_table = seat_person_at_table(head_table, person)
+                    print '%s was pre-assigned to table ' % ' '.join([person.first_name, 
+                                                                      person.last_name]) + \
+                    '%s, which is not in the tables input file.' % table_name
+                    raise
+                table.people.append(person)
     return tables
 
-def build_guess(people, tables, all_days):
-    tables_out = populate_head_table(tables, people)
-    for d in all_days:
+def build_guess(people, tables, days):
+    tables_out = populate_preassigned_tables(people, tables, days)
+    for d in days:
         random.shuffle(people)
-        tables_out = seat_campers(people, tables_out, d)
+        tables_out = seat_people(people, tables_out, d)
     guess = Solution(tables_out)
     return guess

@@ -1,0 +1,16 @@
+Category,Last Name,First Name,Mon,Tue,Wed,Thu,Fri
+Health Administration,Cook,Paul,3,2,2,3,
+Health Administration,Adams,Stacey,3,2,3,2,
+Health Administration,Smith,Rosemary,1,1,1,1,1
+Health Administration,Warwick,Francine,1,1,1,1,1
+Health Administration,Jones,Robert,2,3,3,3,
+Health Administration,Anderson,Pat,2,3,2,2,
+
+
+Rosemary & Francine: 5x
+Paul and Stacey: twice
+Pat and Robert: twice
+Paul and Pat: once
+Stacey & Robert: once
+Stacey & Pat: once
+Paul and Robert: once

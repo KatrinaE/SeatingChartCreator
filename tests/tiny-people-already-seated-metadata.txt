@@ -1,0 +1,14 @@
+# Number of Times Sat Together
+Rosemary & Francine: 3x
+Paul and Stacey: twice
+Pat and Robert: twice
+Paul and Pat: once
+Stacey & Robert: once
+
+# Number of Times in Same Spot
+Paul: 2x1 + 1x1
+Stacey: 2x1 + 1x1
+Rosemary : 3x1
+Francine: 3x1
+Robert: 2x1 + 1x1
+Pat: 2x1 + 1x1
