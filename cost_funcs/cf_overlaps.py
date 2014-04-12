@@ -15,10 +15,12 @@ def times_each_group_sat_together(tables, group_size):
     """
     ids_by_table = []
     for table in tables:
-        ids_by_table.append([person.id for person in table.people])
+        ids = [person.id for person in table.people]
+        ids.sort()
+        ids_by_table.append(ids)
     times_each_group_sat_together = (
-        Counter(chain.from_iterable(combinations(table, group_size) 
-                                    for table in ids_by_table)))
+        Counter(chain.from_iterable(
+            combinations(table, group_size) for table in ids_by_table)))
     return times_each_group_sat_together
 
 def freqs(tables, group_size):

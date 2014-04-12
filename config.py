@@ -1,5 +1,5 @@
 anneal = True
-random_start = True
+random_start = False
 random_anneal = True#False
 progress_bar = True
 verbose = False

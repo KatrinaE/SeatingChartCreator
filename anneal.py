@@ -99,7 +99,6 @@ def table_switch(person_to_switch, random_person, table_to_switch_from, table_to
 def neighbor(solution):
     tables = solution.solution
     tables_out = copy.deepcopy(tables)
-    people = tables_to_people(tables_out, output_format = 'objects')
     p_to_switch, t_to_switch_from = pick_switcher(people, tables_out)
     # there is a bug here somewhere. 
     t_to_switch_to = switcher_destination(tables_out, t_to_switch_from)
@@ -111,23 +110,29 @@ def neighbor(solution):
 def anneal_at_temp(best_state, current_state, T):
     i = 1
     while i < config.iterations_per_temp:
-        new_state = neighbor(current_state)
+        old_cost = current_state.cost
+        current_state.move_to_neighbor()
+        new_cost = current_state.cost
 
-        ap = acceptance_probability(current_state.cost, new_state.cost, T)
+
+        ap = acceptance_probability(old_cost, new_cost, T)
         r = random.random()
 
         if ap > r:
             if config.super_verbose:
-                display_acceptance(ap, r, new_state.cost, "ACCEPT")
-            current_state = new_state
-            if current_state.cost < best_state.cost:
-                best_state = current_state
+                display_acceptance(ap, r, new_cost, "ACCEPT")
+            if new_cost < best_state.cost:
+                best_state = copy.deepcopy(current_state)
                 if config.super_verbose:
                     display_cost_update(best_state.cost)
                 
         else:
+            current_state.move_back_from_neighbor()
+
+
             if config.super_verbose:
-                display_acceptance(ap, r, new_state.cost, "REJECT")
+                display_acceptance(ap, r, new_cost, "REJECT")
+
         i = i + 1
     return best_state, current_state
 
