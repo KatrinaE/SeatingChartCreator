@@ -114,11 +114,14 @@ def anneal_at_temp(best_state, current_state, T):
         current_state.move_to_neighbor()
         new_cost = current_state.cost
 
-
+        #print ' ' 
+        #print "old cost: " + str(old_cost)
+        #print "new cost: " + str(new_cost)
         ap = acceptance_probability(old_cost, new_cost, T)
         r = random.random()
 
         if ap > r:
+            #print "ACCEPT"
             if config.super_verbose:
                 display_acceptance(ap, r, new_cost, "ACCEPT")
             if new_cost < best_state.cost:
@@ -127,8 +130,9 @@ def anneal_at_temp(best_state, current_state, T):
                     display_cost_update(best_state.cost)
                 
         else:
+            #print "REJECT"
             current_state.move_back_from_neighbor()
-
+            #print "btf cost: " + str(current_state.cost)
 
             if config.super_verbose:
                 display_acceptance(ap, r, new_cost, "REJECT")
@@ -152,6 +156,7 @@ def anneal(solution):
     while T > config.T_min and best_state.cost > config.max_acceptable_cost:
         yield best_state, T
         best_state, current_state = anneal_at_temp(best_state, current_state, T)
+        print best_state.cost
         T = T*config.alpha
 
     print "The best cost found is: " + str(best_state.cost)

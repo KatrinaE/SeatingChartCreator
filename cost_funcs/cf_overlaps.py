@@ -23,12 +23,11 @@ def times_each_group_sat_together(tables, group_size):
             combinations(table, group_size) for table in ids_by_table)))
     return times_each_group_sat_together
 
-def freqs(tables, group_size):
-    freq_of_each_grouping = times_each_group_sat_together(tables, group_size)
-    tally_of_freqs = []
-    for grouping, freq in freq_of_each_grouping.iteritems():
-        tally_of_freqs.append(freq)
-    freq_of_freqs = Counter(tally_of_freqs)
+def freqs(pairings_counter):
+    #tally_of_freqs = []
+    #for grouping, freq in pairings_counter.iteritems():
+    #    tally_of_freqs.append(freq)
+    freq_of_freqs = Counter(pairings_counter.values())
     return freq_of_freqs
 
 def cost(freqs, group_size):

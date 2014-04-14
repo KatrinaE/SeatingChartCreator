@@ -52,6 +52,10 @@ def days_list(filename):
                  ['Table Name', 'Category', 'First Name', 'Last Name']]
     return days_list
 
+def days_from_tables(tables):
+    days = list(set(t.day for t in tables))
+    return days
+
 def tables_to_people(tables_list, output_format = 'objects'):
     all_people = []
     people_out = []

@@ -95,7 +95,7 @@ def best_table(person, tables, day):
 def assign_table(person, tables, day):
     table = best_table(person, tables, day)
     setattr(person, day, table.name)
-    seat_person_at_table(table, person)
+    table.people.append(person)
     table_from_person = getattr(person, day)
     table_from_table = [table.name for table in tables if table.day == day and person in table.people][0]
     if table_from_person != table_from_table:
@@ -119,8 +119,7 @@ def populate_preassigned_tables(people, tables, days):
                 except IndexError:
                     import pdb; pdb.set_trace()
 
-                    print '%s was pre-assigned to table ' % ' '.join([person.first_name, 
-                                                                      person.last_name]) + \
+                    print '%s %s was pre-assigned to table ' % (person.first_name, person.last_name) + \
                     '%s, which is not in the tables input file.' % table_name
                     raise
                 table.people.append(person)

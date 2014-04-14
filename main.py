@@ -6,7 +6,6 @@ from build import build_guess
 from anneal import anneal
 from display_messages import display_settings, display_init_cost, \
     display_result, display_progress_bar
-from solution import Solution
 
 def main_gui(people_csv, tables_csv):
     people = people_objects(people_csv)
