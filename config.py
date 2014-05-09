@@ -1,12 +1,9 @@
+build_smart = True
 anneal = True
-random_start = False
-random_anneal = True#False
-progress_bar = True
+display_progress = True
 verbose = False
 super_verbose = False
-GUI = False
 
-num_tries = 1
 ### Annealing Settings ###
 T = 1
 alpha = 0.95

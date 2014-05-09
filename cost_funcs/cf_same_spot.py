@@ -22,7 +22,7 @@ def cost(frequencies_counter):
     cost = 0
     for freq, tally in frequencies_counter.iteritems():
         if freq > 1:
-            cost += (freq**4 * tally)
+            cost += (freq**3 * tally)
             if config.verbose:
                 print str(tally) + " people sit in the same spot " + str(freq) + " times."
     return cost

@@ -5,47 +5,6 @@ import random
 import config
 from solution import Solution
 
-def today_only(tables, day):
-    tables_out = []
-    for table in tables:
-        if table.day == day:
-            tables_out.append(table)
-    return tables_out
-
-def not_head(tables):
-    return [table for table in tables if table.name != 'Head']
-
-def not_full(tables):
-    open_tables = []
-    for table in tables:
-        if len(table.people) < int(table.capacity):
-            open_tables.append(table)
-    if not open_tables:
-        raise Error("More people than tables!")
-    else:
-        return open_tables
-
-def max_for_category(category):
-    # Hack Alert! Hard-coded
-    maxima = {'Health Administration' : 2,
-              'Nursing' : 3,
-              'Medicine' : 4,
-              'Other' : 4,
-             }
-    return maxima[category]
-
-def cat_not_full(tables, category):
-    max_allowed = max_for_category(category)
-    open_tables = []
-    for table in tables:
-        people = [p for p in table.people if p.category  == category]
-        if len(people) < max_allowed:
-            open_tables.append(table)
-    if open_tables == []:
-        return tables
-    else:
-        return open_tables
-
 def get_previous_seatmates(person, tables):
     ids_of_previous_seatmates = []
     for table in tables:
@@ -62,73 +21,70 @@ def ordered_by_num_seatmates(tables, ids_of_previous_seatmates):
         h.append((num_prev_seatmates, table))
     h.sort()
     tables_out = [tup[1] for tup in h]
-    try:
-        # try to return the best 3 tables
-        return tables_out[:2]
-    except:
-        return tables_out
+    return tables_out
 
 def ordered_by_same_spot(tables, person):
-    persons_tables = collections.Counter([v for (k,v) in person.__dict__.iteritems() if k in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']])
+    persons_tables = collections.Counter([t for t in person.tables.values()])
     l = []
     for table in tables:
-        tup = (persons_tables[table.name], table)
-        l.append(tup)
+        frequency_tuple = (persons_tables[table.name], table)
+        l.append(frequency_tuple)
     l.sort()
     tables_out = [tup[1] for tup in l]
     return tables_out
 
 def best_table(person, tables, day):
-    open_tables = today_only(tables, day)
-    open_tables = not_head(open_tables)
-    open_tables = not_full(open_tables)
-    if not config.random_start:
-        open_tables = cat_not_full(open_tables, person.category)
-        ids_of_previous_seatmates = get_previous_seatmates(person, tables)
-        open_tables = ordered_by_num_seatmates(open_tables, ids_of_previous_seatmates)
-        open_tables = ordered_by_same_spot(open_tables, person)
-        best_table = open_tables[0]
-    else:
-        best_table = random.choice(open_tables)
+    if config.build_smart == False:
+        return random.choice([t for t in tables if t.day == day and t.name != 'Head' and not t.is_full()])
+
+    open_tables = [t for t in tables 
+                   if t.day == day 
+                   and t.name != 'Head' 
+                   and not t.is_full()
+                   and not t.is_full_for_cat(person.category)]
+    ids_of_previous_seatmates = get_previous_seatmates(person, tables)
+    open_tables = ordered_by_num_seatmates(open_tables, ids_of_previous_seatmates)
+    #open_tables = ordered_by_same_spot(open_tables, person)
+    best_table = open_tables[0]
     return best_table
 
 def assign_table(person, tables, day):
     table = best_table(person, tables, day)
-    setattr(person, day, table.name)
+    person.tables[day] = table.name
     table.people.append(person)
-    table_from_person = getattr(person, day)
+    # TODO: remove this part!!!
+    table_from_person = person.tables[day]
     table_from_table = [table.name for table in tables if table.day == day and person in table.people][0]
     if table_from_person != table_from_table:
         raise RuntimeError("Table list from person and table list from table do not match")
 
 def seat_people(people, tables, day):
     for person in people:
-        table_name = getattr(person, day)
-        if table_name is '':
+        table_name = person.tables[day]
+        if table_name == '':
             assign_table(person, tables, day)
     return tables
 
 def populate_preassigned_tables(people, tables, days):
     for person in people:
         for day in days:
-            table_name = getattr(person, day)
+            table_name = person.tables[day]
             if table_name != '':
                 try: 
-                    table = [t for t in tables \
-                             if t.name == table_name and t.day == day][0]
+                    preassigned_table = [t for t in tables \
+                                         if t.name == table_name 
+                                         and t.day == day][0]
                 except IndexError:
-                    import pdb; pdb.set_trace()
-
                     print '%s %s was pre-assigned to table ' % (person.first_name, person.last_name) + \
                     '%s, which is not in the tables input file.' % table_name
                     raise
-                table.people.append(person)
+                preassigned_table.people.append(person)
     return tables
 
 def build_guess(people, tables, days):
-    tables_out = populate_preassigned_tables(people, tables, days)
+    tables = populate_preassigned_tables(people, tables, days)
     for d in days:
         random.shuffle(people)
-        tables_out = seat_people(people, tables_out, d)
-    guess = Solution(tables_out)
+        tables = seat_people(people, tables, d)
+    guess = Solution(tables)
     return guess

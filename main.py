@@ -1,95 +1,54 @@
 from copy import deepcopy
+import math
+import argparse
 
 import config
-from seating_io import people_objects, table_objects, write_to_csv_2, days_list
+from seating_io import InputData, write_tables_to_csv, write_people_to_csv
 from build import build_guess
 from anneal import anneal
-from display_messages import display_settings, display_init_cost, \
-    display_result, display_progress_bar
+from display_messages import print_settings, print_init_cost, print_progress, print_final_metrics
+from solution import Solution
 
-def main_gui(people_csv, tables_csv):
-    people = people_objects(people_csv)
-    tables = table_objects(tables_csv)
-    days = days_list(tables_csv)
-    people_copy = deepcopy(people)
-    tables_copy = deepcopy(tables)
-    init_solution = build_guess(people_copy, tables_copy, days)
-    
-    best_solution = init_solution
-    for i in range(0, config.num_tries):
-        people_copy = deepcopy(people)
-        tables_copy = deepcopy(tables)
-        init_solution = build_guess(people_copy, tables_copy, days)
+def check_negative(value):
+    try:
+        ivalue = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("'%s' is not a positive integer" % value)
+    if ivalue < 0:
+         raise argparse.ArgumentTypeError("%s is not a positive integer" % value)
+    return ivalue
 
-        if config.verbose:
-            display_init_cost(init_solution.cost)
+def create_parser():
+    parser = argparse.ArgumentParser(description="Run the Seating Chart Creator command-line app")
+    parser.add_argument("people_file", action="store")
+    parser.add_argument("tables_file", action="store")
+    parser.add_argument("-p", "--output_people_filename", default='output-people.csv', action="store")
+    parser.add_argument("-t", "--output_tables_filename", default='output-tables.csv', action="store")
+    return parser
 
-        if config.anneal:
-            gen = anneal(init_solution)
-            for (best_solution, T) in gen:
-                display_progress_bar(best_solution.cost, T)
-                yield best_solution, T
-        else:
-                best_solution = init_solution
+def main(input_data):
+    people = deepcopy(input_data.people)
+    tables = deepcopy(input_data.tables)
+    init_solution = build_guess(people, tables, input_data.days)
+    best_solution = deepcopy(init_solution)
+    print_init_cost(init_solution.cost)
 
-    filename = "output.csv"
-    write_to_csv_2(best_solution, days, filename)
-
-
-def main(people_csv, tables_csv):
-    if config.verbose:
-        print "*************************************"
-        display_settings()
-    people = people_objects(people_csv)
-    tables = table_objects(tables_csv)
-    days = days_list(tables_csv)
-    people_copy = deepcopy(people)
-    tables_copy = deepcopy(tables)
-    init_solution = build_guess(people_copy, tables_copy, days)
-    
-    best_solution = all_time_greatest = init_solution
-    for i in range(0, config.num_tries):
-        people_copy = deepcopy(people)
-        tables_copy = deepcopy(tables)
-        init_solution = build_guess(people_copy, tables_copy, days)
-
-        if config.verbose:
-            display_init_cost(init_solution.cost)
-
-        if config.anneal:
-            gen = anneal(init_solution)
-            for (best_solution, T) in gen:
-                display_progress_bar(best_solution.cost, T)
-
-        else:
-                best_solution = init_solution
-        """
-        print "The best cost found is: " + str(best_solution.cost)
-        print "The state info is: "
-        print "Pairs overlapping: " + str(best_solution.overlaps2_freqs)
-        print "Trios overlapping: " + str(best_solution.overlaps3_freqs)
-        print "Same spots: " + str(best_solution.same_spot_freqs)
-        print "Category balance: " + str(best_solution.cost_of_category_balance)
-        print "Table size: " + str(best_solution.cost_of_table_size)
-        """
-        if best_solution.cost < all_time_greatest.cost:
-            all_time_greatest = best_solution
-    print "ALL TIME GREATEST"
-    print "The best cost found is: " + str(all_time_greatest.cost)
-    print "The state info is: "
-    print "Pairs overlapping: " + str(all_time_greatest.overlaps2_freqs)
-    print "Trios overlapping: " + str(all_time_greatest.overlaps3_freqs)
-    print "Same spots: " + str(all_time_greatest.same_spot_freqs)
-    print "Category balance: " + str(all_time_greatest.cost_of_category_balance)
-    print "Table size: " + str(all_time_greatest.cost_of_table_size)
-
-    # Write to file
-    filename = "output.csv"
-    write_to_csv_2(all_time_greatest.solution, days, filename)
-
-    if config.verbose:
-        display_result(best_solution.cost)
-        print "************************************"
+    if config.anneal:
+        for (solution, T) in anneal(init_solution):
+            if solution.cost < best_solution.cost:
+                best_solution = deepcopy(solution)
+            yield best_solution, T
+    else:
+        yield best_solution, None
 
 if __name__ == '__main__':
-    main('people.csv', 'tables.csv')
+    parser = create_parser()
+    args = parser.parse_args()
+    input_data = InputData(args.people_file, 
+                           args.tables_file)
+    for (best_solution, T) in main(input_data):
+        print_progress(best_solution, T)
+
+    print_final_metrics(best_solution)
+    write_people_to_csv(best_solution, args.output_people_filename)
+    write_tables_to_csv(best_solution, args.output_tables_filename)
