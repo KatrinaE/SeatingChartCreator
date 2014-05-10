@@ -35,9 +35,8 @@ def main(input_data):
 
     if config.anneal:
         for (solution, T) in anneal(init_solution):
-            if solution.cost < best_solution.cost:
-                best_solution = deepcopy(solution)
-            yield best_solution, T
+            print_progress(solution, T)
+            yield solution, T
     else:
         yield best_solution, None
 
@@ -46,9 +45,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
     input_data = InputData(args.people_file, 
                            args.tables_file)
-    for (best_solution, T) in main(input_data):
-        print_progress(best_solution, T)
 
-    print_final_metrics(best_solution)
-    write_people_to_csv(best_solution, args.output_people_filename)
-    write_tables_to_csv(best_solution, args.output_tables_filename)
+    if not config.test_cost:
+        for (best_solution, T) in main(input_data):
+            print_progress(best_solution, T)
+
+        print_final_metrics(best_solution)
+        write_people_to_csv(best_solution, args.output_people_filename)
+        write_tables_to_csv(best_solution, args.output_tables_filename)
+
+    if config.test_cost:
+        for i in range(0,500):
+            print main(input_data).next()[0].cost

@@ -1,6 +1,6 @@
 from collections import Counter
 
-def imbalance(table, verbose):
+def imbalance(table):
     """ Calculates how far a seating arrangement deviates from optimal
     Returns a list of the form [1, 2, 3] where each number indicates the
     distance of the # of people in each category from the optimal number.
@@ -8,7 +8,7 @@ def imbalance(table, verbose):
     num_by_category = Counter([ person.category for person in table.people ])
     distance_list = []
     categories_dict = {c: o for c, o in table.capacities.items()
-                       if c != 'overall'}
+                       if c != 'overall-max' and c != 'overall-min'}
     for (category, optimal_size) in categories_dict.items():
         actual_size = num_by_category[category]
         distance_from_opt = abs(actual_size - optimal_size)
@@ -23,7 +23,7 @@ def cost(tables, verbose=False):
     for table in tables:
         if table.name != 'Head':
             table_cost = 0
-            imbalances = imbalance(table, verbose)
+            imbalances = imbalance(table)
             for category_imbalance in imbalances:
                 table_cost += category_imbalance**4
             cost += table_cost

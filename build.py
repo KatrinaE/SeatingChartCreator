@@ -23,15 +23,29 @@ def ordered_by_num_seatmates(tables, ids_of_previous_seatmates):
     tables_out = [tup[1] for tup in h]
     return tables_out
 
-def ordered_by_same_spot(tables, person):
-    persons_tables = collections.Counter([t for t in person.tables.values()])
-    l = []
-    for table in tables:
-        frequency_tuple = (persons_tables[table.name], table)
-        l.append(frequency_tuple)
-    l.sort()
-    tables_out = [tup[1] for tup in l]
-    return tables_out
+def room_for_cat(tables, category):
+    open_tables = [t for t in tables if not t.is_full_for_cat(category)]
+    if open_tables != []:
+        return open_tables
+    else:
+        return tables
+
+def small_tables(tables, open_tables, day):        
+    average = sum([len(t.people) for t in tables if t.day == day and t.name != 'Head'])/len([t for t in tables if t.day == day and t.name != 'Head'])
+    open_tables2 = [t for t in open_tables if len(t.people) < average-2]
+    if open_tables2 != []:
+        return open_tables2
+    return open_tables
+
+def not_sat_at_twice(open_tables, person):
+    counts = collections.Counter(person.tables.values())
+    if counts != {}:
+        bad_names = [table_name for (table_name, count) in counts.items() if count > 1
+                     and table_name != 'Head' and table_name != '']
+        good_tables = [t for t in open_tables if t.name not in bad_names]
+        if good_tables != []:
+            return good_tables
+    return open_tables
 
 def best_table(person, tables, day):
     if config.build_smart == False:
@@ -40,11 +54,12 @@ def best_table(person, tables, day):
     open_tables = [t for t in tables 
                    if t.day == day 
                    and t.name != 'Head' 
-                   and not t.is_full()
-                   and not t.is_full_for_cat(person.category)]
+                   and not t.is_full()]
+    open_tables = small_tables(tables, open_tables, day)
+    open_tables = room_for_cat(open_tables, person.category)
+    open_tables = not_sat_at_twice(open_tables, person)
     ids_of_previous_seatmates = get_previous_seatmates(person, tables)
     open_tables = ordered_by_num_seatmates(open_tables, ids_of_previous_seatmates)
-    #open_tables = ordered_by_same_spot(open_tables, person)
     best_table = open_tables[0]
     return best_table
 
@@ -52,11 +67,6 @@ def assign_table(person, tables, day):
     table = best_table(person, tables, day)
     person.tables[day] = table.name
     table.people.append(person)
-    # TODO: remove this part!!!
-    table_from_person = person.tables[day]
-    table_from_table = [table.name for table in tables if table.day == day and person in table.people][0]
-    if table_from_person != table_from_table:
-        raise RuntimeError("Table list from person and table list from table do not match")
 
 def seat_people(people, tables, day):
     for person in people:

@@ -42,15 +42,10 @@ def anneal_at_temp(best_solution, current_solution, T):
         r = random.random()
 
         if ap > r:
-
-            print_acceptance(ap, r, new_cost, "ACCEPT")
             if new_cost < best_solution.cost:
                 best_solution = copy.deepcopy(current_solution)
-                print_cost_update(best_solution.cost)
         else:
             current_solution.move_back_from_neighbor()
-            print_acceptance(ap, r, new_cost, "REJECT")
-
         i += 1
     return best_solution, current_solution
 
@@ -62,10 +57,11 @@ def anneal(solution):
     accepts moves to worse states, especially early on, to avoid
     getting trapped at a local maxima.
     """
-    current_solution = best_solution = solution
+    current_solution = solution
+    best_solution = copy.deepcopy(solution)
     T = config.T
     while T > config.T_min and best_solution.cost > config.max_acceptable_cost:
-        yield best_solution, T
         best_solution, current_solution = anneal_at_temp(best_solution, current_solution, T)
         T = T*config.alpha
+        yield best_solution, T
     yield best_solution, T

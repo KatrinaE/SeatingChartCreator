@@ -1,3 +1,4 @@
+test_cost = False
 build_smart = True
 anneal = True
 display_progress = True

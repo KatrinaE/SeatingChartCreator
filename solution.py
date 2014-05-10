@@ -42,11 +42,27 @@ class Solution(object):
         day_to_switch = random.choice(self.days)
         tables_that_day = [t for t in self.solution \
                            if t.day == day_to_switch and t.name != 'Head']
-        tables_to_switch = random.sample(tables_that_day, 2)
-        self.table0 = tables_to_switch[0]
-        self.table1 = tables_to_switch[1]
-        self.person0 = random.choice(self.table0.people)
-        self.person1 = random.choice(self.table1.people)
+        
+
+        sub_capacity_tables = [t for t in tables_that_day
+                               if not t.is_full()]
+        num_ppl = float(len(set([p for t in tables_that_day for p in t.people])))
+        num_seats = float(sum([t.capacities['overall-max'] for t in tables_that_day]))
+        single_switch_probability = num_ppl/num_seats
+        single_switch = sub_capacity_tables != [] \
+                        and (random.random() >  single_switch_probability)
+        if single_switch:
+            self.table0 = random.choice([t for t in tables_that_day 
+                                         if t not in sub_capacity_tables])
+            self.table1 = random.choice(sub_capacity_tables)
+            self.person0 = random.choice(self.table0.people)
+            self.person1 = None
+        else:
+            tables_to_switch = random.sample(tables_that_day, 2)
+            self.table0 = tables_to_switch[0]
+            self.table1 = tables_to_switch[1]
+            self.person0 = random.choice(self.table0.people)
+            self.person1 = random.choice(self.table1.people)
 
         # pass switchback_args along in case the new solution is not
         # accepted and we need to revert 'tables' to its old state. The alternative
@@ -65,9 +81,23 @@ class Solution(object):
 
 
     def _table_switch(self, table0, person0, table1, person1):
-        table0.people.remove(person0)
-        table0.people.append(person1)
-        table1.people.remove(person1)
-        table1.people.append(person0)
-        setattr(person0, table0.day, table1.name)
-        setattr(person1, table0.day, table0.name)
+        if person0 != None and person1 != None:
+            table0.people.remove(person0)
+            table0.people.append(person1)
+            table1.people.remove(person1)
+            table1.people.append(person0)
+            person0.tables[table0.day] = table1.name
+            person1.tables[table0.day] = table0.name
+
+        elif person0 != None and person1 == None:
+            table0.people.remove(person0)
+            table1.people.append(person0)
+            person0.tables[table0.day] = table1.name
+            #print '%s moved from %s to %s' % (person0.id, table0.name, table1.name)
+
+        elif person0 == None and person1 != None:
+            table0.people.remove(person1)
+            table1.people.append(person1)
+            person1.tables[table0.day] = table1.name
+            #print '%s moved from %s to %s' % (person1.id, table0.name, table1.name)
+            

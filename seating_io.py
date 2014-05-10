@@ -43,23 +43,20 @@ class Table(object):
         self.day = day
         self.people = []
         
-        self.capacities = {"overall" : capacity }
+        self.capacities = {"overall-max" : int(capacity) , "overall-min" : int(capacity) - 2}
         cat_capacities = { name: math.ceil(proportion * float(capacity))
                                 for (name, proportion) in cat_proportions.items() }
         self.capacities.update(cat_capacities)
 
     def is_full(self):
-        if len(self.people) > self.capacities['overall']:
+        if len(self.people) > self.capacities['overall-max']:
             raise RuntimeError("Table %s is over capacity" % self.name)
         else:
-            return len(self.people) == self.capacities['overall']
+            return len(self.people) == self.capacities['overall-max']
 
     def is_full_for_cat(self, category):
         people_in_cat = [p for p in self.people if p.category == category]
-        if len(people_in_cat) > self.capacities[category]:
-            raise RuntimeError("Table %s is over capacity" % self.name)
-        else:
-            return len(people_in_cat) == self.capacities[category]
+        return len(people_in_cat) >= self.capacities[category]
 
 
 def table_objects(filename, category_proportions):
