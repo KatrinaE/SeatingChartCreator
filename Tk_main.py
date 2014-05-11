@@ -8,9 +8,10 @@ import math
 import sys
 import threading
 import Queue
- 
+
 # Tkinter imports
-from Tkinter import *
+from Tkinter import Tk, Frame, PhotoImage, Label, Button, StringVar, Toplevel,\
+    LEFT, N, NW, SE, S, SW, SE, E, W
 import tkMessageBox
 import tkFileDialog
 import ttk
@@ -22,8 +23,8 @@ import matplotlib.pyplot as plt
 
 # Seating Chart Creator imports
 import main as backend
-import config
-from seating_io import write_tables_to_csv, write_people_to_csv, InputData
+from seating import config
+from seating.seating_io import write_tables_to_csv, write_people_to_csv, InputData
 
 class ResultsFrame(Frame):
     def __init__(self, parent, plot_frame):
@@ -33,10 +34,11 @@ class ResultsFrame(Frame):
         self.initialize()
 
     def initialize(self):
-        self.frame_header = Label(self, text="Solution Metrics:", foreground="gray", \
+        self.frame_header = Label(self, text="Solution Metrics:", \
+                                  foreground="gray", \
                                   font=("Optima Italic", 24))
         self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), \
-                               pady=(20,10))
+                               pady=(20, 10))
 
         self.pairs2_label = Label(self, text="Number of pairs sitting \n" + \
                                     "together twice: ", \
@@ -81,25 +83,31 @@ class ResultsFrame(Frame):
                              foreground="gray", font=("Optima bold", 24))
         #self.trios3.grid(row=5, column=1, sticky=(E))
 
-        self.same_spot2_label = Label(self, text="Number of people sitting \n" + \
+        self.same_spot2_label = Label(self,
+                                      text="Number of people sitting \n" + \
                                      "in the same spot twice: ", \
                                      justify=LEFT, foreground="gray")
         self.same_spot2_label.grid(row=6, column=0, sticky=(W), pady=10)
         self.same_spot2_var = StringVar()
         self.same_spot2_var.set('__')
-        self.same_spot2 = Label(self, textvariable=self.same_spot2_var, width=10, \
-                             foreground="gray", font=("Optima bold", 24))
+        self.same_spot2 = Label(self,
+                                textvariable=self.same_spot2_var,
+                                width=10, foreground="gray",
+                                font=("Optima bold", 24))
         self.same_spot2.grid(row=6, column=1, sticky=(E))
 
 
-        self.same_spot3_label = Label(self, text="Number of people sitting \n" + \
+        self.same_spot3_label = Label(self,
+                                      text="Number of people sitting \n" + \
                                      "in the same spot three times: ", \
                                      justify=LEFT, foreground="gray")
         self.same_spot3_label.grid(row=7, column=0, sticky=(W), pady=10)
         self.same_spot3_var = StringVar()
         self.same_spot3_var.set('__')
-        self.same_spot3 = Label(self, textvariable=self.same_spot3_var, width=10, \
-                             foreground="gray", font=("Optima bold", 24))
+        self.same_spot3 = Label(self,
+                                textvariable=self.same_spot3_var,
+                                width=10, foreground="gray",
+                                font=("Optima bold", 24))
         self.same_spot3.grid(row=7, column=1, sticky=(E))
 
 
@@ -124,9 +132,11 @@ class InputFrame(Frame):
             self.submit_button.config(state='disabled')
 
     def initialize(self):
-        self.frame_header = Label(self, text="Load your files:", foreground="black", \
+        self.frame_header = Label(self, text="Load your files:",
+                                  foreground="black",
                                   font=("Optima Italic", 24))
-        self.frame_header.grid(row=0, column=0, columnspan=2, sticky=(NW), pady=(20,10), padx=(0,0))
+        self.frame_header.grid(row=0, column=0, columnspan=2,
+                               sticky=(NW), pady=(20, 10), padx=(0, 0))
 
         self.p_filename = StringVar()
         self.t_filename = StringVar()
@@ -136,7 +146,7 @@ class InputFrame(Frame):
         # must use lamba - otherwise 'command' executes when the code is loaded,
         # not when the button is pressed
         self.p_entry = ttk.Entry(self, textvariable=self.p_filename, width=20)
-        self.p_entry.grid(row=1,column=0, sticky=(W))
+        self.p_entry.grid(row=1, column=0, sticky=(W))
         self.p_button = ttk.Button(self, text='Choose People File',\
                                    command=lambda: self.get_filename(self.p_filename))
         self.p_button.grid(row=1, column=1, padx=5, pady=10, sticky=(E))
@@ -148,33 +158,36 @@ class InputFrame(Frame):
         self.t_button.grid(row=2, column=1, padx=5, pady=10, sticky=(E))
 
         self.submit_button = ttk.Button(self, text='Generate Seating Chart', \
-                                        command=lambda: self.generate_results(), 
+                                        command=self.generate_results,
                                         state='disabled')
         self.submit_button.grid(row=4, column=0, columnspan=2, pady=10)
 
         self.save_header = Label(self, text="Save your results:", fg="Gray", \
                                   font=("Optima Italic", 24))
         self.save_header.grid(row=6, column=0, columnspan=2, sticky=(NW), \
-                               pady=(20,10), padx=(10,10))
+                               pady=(20, 10), padx=(10, 10))
 
         self.save_filename = StringVar()
 
         self.save_people_var = StringVar()
         self.save_people_var.set('Save by Person Name')
-        self.save_people_button = Button(self, textvariable=self.save_people_var, state='disabled',\
-                                  command=lambda: self.save_file('people'))
+        self.save_people_button = Button(self,
+                                         textvariable=self.save_people_var,
+                                         state='disabled',
+                                         command=lambda: self.save_file('people'))
         self.save_people_button.grid(row=7, column=0, pady=10)
-
 
         self.save_tables_var = StringVar()
         self.save_tables_var.set('Save by Table Number')
-        self.save_tables_button = Button(self, textvariable=self.save_tables_var, state='disabled',\
-                                  command=lambda: self.save_file('tables'))
+        self.save_tables_button = Button(self,
+                                         textvariable=self.save_tables_var,
+                                         state='disabled',
+                                         command=lambda: self.save_file('tables'))
         self.save_tables_button.grid(row=7, column=1, pady=10)
 
 
     def pause_or_resume(self):
-        if not self.holding_lock: 
+        if not self.holding_lock:
             # pause
             self.switch_to_output_mode()
             self.backend_call.lock.acquire()
@@ -182,7 +195,7 @@ class InputFrame(Frame):
         else:
             # resume
             self.switch_to_calculations_mode()
-            self.backend_call.lock.release()        
+            self.backend_call.lock.release()
             self.holding_lock = False
 
     def reset(self):
@@ -196,8 +209,8 @@ class InputFrame(Frame):
 
     def save_file(self, formatting):
         options = dict(defaultextension='.csv',\
-                       filetypes=[('CSV files','*.csv'), \
-                                  ('Text files','*.txt')])
+                       filetypes=[('CSV files', '*.csv'), \
+                                  ('Text files', '*.txt')])
         filename = tkFileDialog.asksaveasfilename(**options)
         self.save_filename.set(filename)
         self.update_idletasks()
@@ -208,10 +221,10 @@ class InputFrame(Frame):
 
     def get_filename(self, filename_var):
         options = dict(defaultextension='.csv',\
-                   filetypes=[('CSV files','*.csv'), \
-                              ('Text files','*.txt')])
+                   filetypes=[('CSV files', '*.csv'), \
+                              ('Text files', '*.txt')])
         filename = tkFileDialog.askopenfilename(**options)
-        filename_var.set(filename)        
+        filename_var.set(filename)
         self.update_idletasks()
         if filename:
             print "selected: " + str(filename_var.get())
@@ -263,9 +276,15 @@ class InputFrame(Frame):
         self.results_frame.same_spot2_var.set('__')
         self.results_frame.same_spot3_var.set('__')
 
-        self.plot_frame.rects = self.plot_frame.plot.barh((0), (self.progress_frame.baseline_cost), height=1, left=0, linewidth=0, color='white')
+        self.plot_frame.rects = self.plot_frame.plot.barh((0),
+                                                          (self.\
+                                                           progress_frame.\
+                                                           baseline_cost),
+                                                          height=1, left=0,
+                                                          linewidth=0,
+                                                          color='white')
         self.plot_frame.canvas.draw()
- 
+
     def switch_to_output_mode(self):
         self.submit_button.config(state='disabled')
         self.frame_header.config(foreground="gray")
@@ -341,12 +360,13 @@ class InputFrame(Frame):
         self.results_frame.same_spot2.config(foreground="violet red")
         self.results_frame.same_spot3.config(foreground="violet red")
 
-    # from http://stackoverflow.com/questions/16745507/tkinter-how-to-use-threads-to-preventing-main-event-loop-from-freezing
+    # from http://stackoverflow.com/questions/16745507/
+    # tkinter-how-to-use-threads-to-preventing-main-event-loop-from-freezing
     def generate_results(self):
         self.switch_to_calculations_mode()
         self.queue = Queue.Queue()
         try:
-            self.backend_call = ThreadedBackendCall(self.queue, self.p_filename, 
+            self.backend_call = ThreadedBackendCall(self.queue, self.p_filename,
                                                     self.t_filename)
         except TypeError:
             # bad input files
@@ -369,20 +389,30 @@ class InputFrame(Frame):
                 self.switch_to_output_mode()
             elif msg[2] == 'Baseline cost':
                 self.progress_frame.baseline_cost = msg[0].baseline_cost
-                self.progress_frame.plot_frame.plot.set_xlim(0, self.progress_frame.baseline_cost)
+                self.progress_frame.plot_frame.plot.set_xlim(0,
+                                                             self.\
+                                                             progress_frame.\
+                                                             baseline_cost)
                 self.parent.after(10, self.process_queue)
             else:
                 self.solution = msg[0]
                 iteration = msg[1]
                 cost = msg[2]
-                quality = self.progress_frame.baseline_cost - cost # low cost = high quality
+                quality = self.progress_frame.baseline_cost - cost
                 self.progress_frame.num_tries_var.set(int(iteration))
-                self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
+                self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality),
+                                                                  height=1,
+                                                                  left=0,
+                                                                  linewidth=0,
+                                                                  color=self.\
+                                                                  plot_frame.\
+                                                                  color)
                 self.plot_frame.canvas.draw()
 
                 self.plot_frame.rects = self.plot_frame.plot.barh\
-                                        ((0), (quality), height=1, left=0, \
-                                         linewidth=0, color=self.plot_frame.color)
+                                        ((0), (quality), height=1, left=0,
+                                         linewidth=0,
+                                         color=self.plot_frame.color)
                 self.plot_frame.canvas.draw()
                 self.progress_frame.num_tries_var.set(int(iteration))
                 self.results_frame.pairs2_var.set(self.solution.overlaps2_freqs[2])
@@ -397,8 +427,10 @@ class InputFrame(Frame):
             self.parent.after(10, self.process_queue)
 
 class PlotFrame(Frame):
-    def __init__(self, parent, title_text, axes_scale, color, y_left, y_right, width=500, height=200, background="white"):
-        Frame.__init__(self, parent, width=1000, height=5000, background="white")
+    def __init__(self, parent, title_text, axes_scale, color,
+                 y_left, y_right, width=500, height=200, background="white"):
+        Frame.__init__(self, parent, width=1000,
+                       height=5000, background="white")
         self.title_text = title_text
         self.axes_scale = axes_scale
         self.color = color
@@ -410,21 +442,22 @@ class PlotFrame(Frame):
     def initialize(self):
         # create title
         self.title_frame = Frame(self)
-        self.title = Label(self.title_frame, text=self.title_text, font=("Optima Italic", 24), foreground="gray")
+        self.title = Label(self.title_frame, text=self.title_text,
+                           font=("Optima Italic", 24), foreground="gray")
         self.title.grid(row=0, column=0, sticky=(W))
         self.title_frame.grid(row=0, column=0, sticky=(W))
 
         # create figure
         self.fig = plt.figure()
         self.fig.set_facecolor('white')
-        self.fig.set_size_inches(6,2)
+        self.fig.set_size_inches(6, 2)
 
         # create subplot
         self.plot = self.fig.add_subplot(111)
         self.plot.axis(self.axes_scale)
 
         # format subplot
-        spines_to_remove = ['top','bottom']
+        spines_to_remove = ['top', 'bottom']
         for spine in spines_to_remove:
             self.plot.spines[spine].set_visible(False)
         self.plot.get_xaxis().set_ticks([])
@@ -438,11 +471,11 @@ class PlotFrame(Frame):
         self.plotax2.get_xaxis().set_ticks([])
         self.plotax2.get_yaxis().set_ticks([])
         self.plotax2.set_ylabel(self.y_right, rotation='horizontal')
- 
+
         distance = 0
         val = 0
-        self.rects = self.plot.barh((0), (val), height=1, left=0, linewidth=0, color=self.color)
-
+        self.rects = self.plot.barh((0), (val), height=1, left=0,
+                                    linewidth=0, color=self.color)
         self.fig.tight_layout()
 
         # display plot
@@ -452,30 +485,39 @@ class PlotFrame(Frame):
         self.canvas.get_tk_widget().grid(row=1, column=0, sticky=(N))
 
         # hide plot until it's needed
-        self.shield = Frame(self, width="6.75i", height="2i", background="white")
+        self.shield = Frame(self, width="6.75i", height="2i",
+                            background="white")
         self.shield.grid(row=1, column=0)
 
 class InstructionsFrame(Frame):
     def __init__(self, parent, width=500, height=200, background="white"):
-        Frame.__init__(self, parent)#, width=width, height=height, background=background)
+        Frame.__init__(self, parent)
         self.initialize()
 
     def initialize(self):
         self.instructions_text = \
-    """ 
-    Seating Chart Creator makes an optimal seating chart for a given set of people, tables, and days. It generates a preliminary chart, then searches for a better one by switching people around.\n"""    
-        self.instructions_label = Label(self, text=self.instructions_text, font=("Optima",14), anchor=W, justify=LEFT)
+    """
+    Seating Chart Creator makes an optimal seating chart for a given set of people, tables, and days. It generates a preliminary chart, then searches for a better one by switching people around.\n"""
+        self.instructions_label = Label(self, text=self.instructions_text,
+                                        font=("Optima", 14), anchor=W,
+                                        justify=LEFT)
         self.instructions_label.grid(row=0, column=0, sticky=(W))
 
         miniframe = Frame(self)
-        miniframe.grid(row=1, column=0, padx=0, pady=(0,20))
-        self.rules_button = Button(miniframe, text="View list of optimization rules", command=self.show_rules)
+        miniframe.grid(row=1, column=0, padx=0, pady=(0, 20))
+        self.rules_button = Button(miniframe,
+                                   text="View list of optimization rules",
+                                   command=self.show_rules)
         self.rules_button.grid(row=1, column=0, sticky=(W), padx=10)
 
-        self.people_example = Button(miniframe, text = "View example people input file", command=self.show_people_example)
+        self.people_example = Button(miniframe,
+                                     text="View example people input file",
+                                     command=self.show_people_example)
         self.people_example.grid(row=1, column=1, sticky=(W), padx=10)
 
-        self.tables_example = Button(miniframe, text = "View example tables input file", command=self.show_tables_example)
+        self.tables_example = Button(miniframe,
+                                     text="View example tables input file",
+                                     command=self.show_tables_example)
         self.tables_example.grid(row=1, column=2, sticky=(W), padx=10)
 
     def show_rules(self):
@@ -487,12 +529,13 @@ class InstructionsFrame(Frame):
 
         innerwindowr = Canvas(self.windowr)
         innerwindowr.pack()
-        myscrollbar=Scrollbar(self.windowr,orient="vertical",command=innerwindowr.yview)
+        myscrollbar=Scrollbar(self.windowr, orient="vertical",
+                              command=innerwindowr.yview)
         innerwindowr.configure(yscrollcommand=myscrollbar.set)
         myscrollbar.pack(side="right",fill="y")
 
         #self.rtitle_label2 = Label(z,
-        #                           text="Seating Chart Creator's Optimization Rules", 
+        #                           text="Seating Chart Creator's Optimization Rules",
         #                           font=("Optima Italic", 24))
         #self.rtitle_label2.pack()
 
@@ -507,7 +550,7 @@ Seating Chart Creator searches for that perfect solution using an optimization a
 It specifies the criteria to evaluate the solution with, then searches for the
 solution that best meets that criteria.
 
-The search process involves random factors, so if you run it multiple times, you will 
+The search process involves random factors, so if you run it multiple times, you will
 get different answers.
 
 
@@ -549,17 +592,17 @@ The technique SCC uses is called 'simulated annealing'. It is a frequently-used 
 highly-regarded method for solving problems like this one. However, it is not guaranteed
 to find a perfect solution.
 
-The switching steps take a very long time (minutes - hours) because of the computational 
+The switching steps take a very long time (minutes - hours) because of the computational
 complexity of counting the number of times everyone sits together.
 
 """
         #scrollbar = Scrollbar(innerwindowr)
         #scrollbar.pack(side=RIGHT, fill=Y)
         #self.foo = Label(innerwindowr, text=rtext1)
-        self.foo = Text(innerwindowr, width=100)
-        self.foo.insert(INSERT, rtext1)
-        self.foo.config(highlightthickness=0)
-        self.foo.pack(padx=20)
+        self.rules_text_box = Text(innerwindowr, width=100)
+        self.rules_text_box.insert(INSERT, rtext1)
+        self.rules_text_box.config(highlightthickness=0)
+        self.rules_text_box.pack(padx=20)
         #self.foo.config(yscrollcommand=scrollbar.set)
         #scrollbar.config(command=self.foo.yview)
 
@@ -572,7 +615,9 @@ complexity of counting the number of times everyone sits together.
 
         innerwindowp = Frame(self.window)
         innerwindowp.grid(row=0, column=0)
-        self.ptitle_label2 = Label(innerwindowp, text="Example People Input File", font=("Optima Italic", 24))
+        self.ptitle_label2 = Label(innerwindowp,
+                                   text="Example People Input File",
+                                   font=("Optima Italic", 24))
         self.ptitle_label2.grid(row=0, column=0)
         ptext1 = \
 """
@@ -583,30 +628,32 @@ It should be saved in CSV format."""
 """The file should contain the column headers 'First Name', 'Last Name', and 'Category', written exactly as printed here -
 capitalization is important.
 
-All other columns are assumed to be the names of the days you are making the chart for. They must match the days in your 
+All other columns are assumed to be the names of the days you are making the chart for. They must match the days in your
 'Tables' input file exactly (again, capitalization is important)."""
         pheader2 = "NOTES"
-        ptext3= \
+        ptext3 = \
 """Each person should be assigned a category. You can name the categories whatever you like.
 
-If a person has been preassigned to the head table on a particular day, write 'Head' (with a capital 'H') in the corresponding 
+If a person has been preassigned to the head table on a particular day, write 'Head' (with a capital 'H') in the corresponding
 cell."""
         ptext1label = Label(innerwindowp, text=ptext1, justify=LEFT)
         ptext1label.grid(row=1, column=0, padx=20, sticky=(W))
 
-        pheader1label = Label(innerwindowp, text=pheader1, font=("Optima Italic", 14), justify=LEFT)
-        pheader1label.grid(row=2, column=0, padx=20, pady=(20,0), sticky=(W))
+        pheader1label = Label(innerwindowp, text=pheader1,
+                              font=("Optima Italic", 14), justify=LEFT)
+        pheader1label.grid(row=2, column=0, padx=20, pady=(20, 0), sticky=(W))
 
         ptext2label = Label(innerwindowp, text=ptext2, justify=LEFT)
         ptext2label.grid(row=3, column=0, padx=20, sticky=(W))
 
-        pheader2label = Label(innerwindowp, text=pheader2, font=("Optima Italic", 14), justify=LEFT)
+        pheader2label = Label(innerwindowp, text=pheader2,
+                              font=("Optima Italic", 14), justify=LEFT)
         pheader2label.grid(row=4, column=0, padx=20, pady=(20,0), sticky=(W))
 
         ptext3label = Label(innerwindowp, text=ptext3, justify=LEFT)
         ptext3label.grid(row=5, column=0, padx=20, sticky=(W))
 
-        self.picture2p = PhotoImage(file='people-example.gif')
+        self.picture2p = PhotoImage(file='static/people-example.gif')
         self.picture_label2p = Label(self.window, image = self.picture2p)
         self.picture_label2p.grid(row=2, column=0)
 
@@ -619,42 +666,46 @@ cell."""
 
         innerwindow = Frame(self.window2)
         innerwindow.grid(row=0, column=0)
-        self.title_label2 = Label(innerwindow, text="Example Tables Input File", font=("Optima Italic", 24))
+        self.title_label2 = Label(innerwindow,
+                                  text="Example Tables Input File",
+                                  font=("Optima Italic", 24))
         self.title_label2.grid(row=0, column=0)
         text1 = \
 """
-The 'Tables' input file contains information about the individual tables' names and capacities. It should be saved in CSV 
+The 'Tables' input file contains information about the individual tables' names and capacities. It should be saved in CSV
 format."""
         header1 = "COLUMN NAMES"
         text2 = \
 """The file should contain the column header 'Table Name', written exactly as printed here - capitalization is important.
 
-All other columns are assumed to be the names of the days you are making the chart for. They must match the days in your 
+All other columns are assumed to be the names of the days you are making the chart for. They must match the days in your
 'People' input file exactly (again, capitalization is important)."""
         header2 = "NOTES"
         text3= \
-"""You can choose arbitrary table names. If you include a table named 'Head', it will be populated exclusively with the people 
+"""You can choose arbitrary table names. If you include a table named 'Head', it will be populated exclusively with the people
 preassigned to it in the 'People' input file.
 
-The number in each cell represents the table's capacity on that day. Make sure the overall capacity is at least as great as 
+The number in each cell represents the table's capacity on that day. Make sure the overall capacity is at least as great as
 the number of people to be seated!"""
         text1label = Label(innerwindow, text=text1, justify=LEFT)
         text1label.grid(row=1, column=0, padx=20, sticky=(W))
 
-        header1label = Label(innerwindow, text=header1, font=("Optima Italic", 14), justify=LEFT)
-        header1label.grid(row=2, column=0, padx=20, pady=(20,0), sticky=(W))
+        header1label = Label(innerwindow, text=header1,
+                             font=("Optima Italic", 14), justify=LEFT)
+        header1label.grid(row=2, column=0, padx=20, pady=(20, 0), sticky=(W))
 
         text2label = Label(innerwindow, text=text2, justify=LEFT)
         text2label.grid(row=3, column=0, padx=20, sticky=(W))
 
-        header2label = Label(innerwindow, text=header2, font=("Optima Italic", 14), justify=LEFT)
-        header2label.grid(row=4, column=0, padx=20, pady=(20,0), sticky=(W))
+        header2label = Label(innerwindow, text=header2,
+                             font=("Optima Italic", 14), justify=LEFT)
+        header2label.grid(row=4, column=0, padx=20, pady=(20, 0), sticky=(W))
 
         text3label = Label(innerwindow, text=text3, justify=LEFT)
         text3label.grid(row=5, column=0, padx=20, sticky=(W))
 
-        self.picture2 = PhotoImage(file='tables-example.gif')
-        self.picture_label2 = Label(self.window2, image = self.picture2)
+        self.picture2 = PhotoImage(file='static/tables-example.gif')
+        self.picture_label2 = Label(self.window2, image=self.picture2)
         self.picture_label2.grid(row=2, column=0)
 
 class HeaderFrame(Frame):
@@ -663,10 +714,10 @@ class HeaderFrame(Frame):
         self.initialize()
 
     def initialize(self):
-        self.logo = PhotoImage(file='logo-small.gif')
+        self.logo = PhotoImage(file='static/logo-small.gif')
         self.logo_label = Label(self)
         self.logo_label['image'] = self.logo
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(10,0), sticky=(W))
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(10, 0), sticky=(W))
 
         self.title = Label(self, text="Seating Chart Creator", \
                       font=("Optima", 48))
@@ -684,28 +735,31 @@ class ProgressFrame(Frame):
         self.plot_frame = PlotFrame(self, "Quality of Solution", \
                                 plot_axes, "dodgerblue", "Poor", "Perfect")
         self.plot_frame.grid(row=0, column=0, sticky=(N))
-        
-        self.num_tries_title = Label(self, text="Number of Attempts Made", \
+
+        self.num_tries_title = Label(self, text="Number of Attempts Made",
                                      font=("Optima Italic", 24), fg="gray")
-        self.num_tries_title.grid(row=1, column=0, sticky=(NW), pady=(20,0))
-        
+        self.num_tries_title.grid(row=1, column=0, sticky=(NW), pady=(20, 0))
+
         self.num_tries_var = StringVar()
         self.num_tries_var.set('__')
-        self.num_tries = Label(self, textvariable=self.num_tries_var, \
+        self.num_tries = Label(self, textvariable=self.num_tries_var,
                           font=("Optima Bold", 24), foreground="gray")
-        self.num_tries.grid(row=2, column=0, columnspan=2, sticky=(S), pady=(20,20))
+        self.num_tries.grid(row=2, column=0, columnspan=2, sticky=(S),
+                            pady=(20, 20))
 
 
         self.pause_var = StringVar()
         self.pause_var.set('Pause')
-        self.pause_button = Button(self, textvariable=self.pause_var, state='disabled',\
-                                   command=lambda: self.input_frame.pause_or_resume(), \
+        self.pause_button = Button(self, textvariable=self.pause_var,
+                                   state='disabled',
+                                   command=lambda: self.input_frame.pause_or_resume(),
                                    width=10, pady=20)
         self.pause_button.grid(row=9, column=0)
 
 
-        self.reset_button = Button(self, text="Reset", state='disabled', \
-                                   command = lambda:self.input_frame.reset(), width=10)
+        self.reset_button = Button(self, text="Reset", state='disabled',
+                                   command=lambda: self.input_frame.reset(), 
+                                   width=10)
         self.reset_button.grid(row=9, column=1)
 
 
@@ -736,7 +790,7 @@ class ThreadedBackendCall(threading.Thread):
         self.queue.put("Task finished")
 
     def stop(self):
-        self._stop_req.set();
+        self._stop_req.set()
 
 def main():
 
@@ -770,8 +824,8 @@ def main():
 
     progress_frame.input_frame = input_frame
     results_frame.input_frame = input_frame
-    root.mainloop()  
+    root.mainloop()
 
 
 if __name__ == '__main__':
-    main()  
+    main()

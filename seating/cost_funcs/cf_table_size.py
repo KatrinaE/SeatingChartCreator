@@ -8,5 +8,5 @@ def cost(tables, verbose=False):
             too_big = max(num_ppl - table.capacities['overall-max'], 0)
             too_small = max(table.capacities['overall-min'] - num_ppl, 0)
             distance = max(too_big, too_small)
-            cost += distance**100
+            cost += distance**100000
     return cost

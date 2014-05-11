@@ -1,6 +1,6 @@
 from collections import Counter
 
-import config
+from .. import config
 
 def freqs(tables):
     all_people_ever_at_tables = {}

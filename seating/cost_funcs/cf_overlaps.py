@@ -1,7 +1,7 @@
 from collections import Counter
 from itertools import chain, combinations
 
-import config
+from .. import config
 
 def display_output(freq_counter):
     for (k,v) in freq_counter.iteritems():
@@ -39,7 +39,8 @@ def cost(freqs, group_size):
 
     if cost > 0 and config.verbose:
         print ''
-        print "Number of times a group of " + str(group_size) + " sits together X times: "
+        print "Number of times a group of " + str(group_size) + \
+            " sits together X times: "
         display_output(freqs)
         print "Cost of these overlaps: " + str(cost)
         print ''

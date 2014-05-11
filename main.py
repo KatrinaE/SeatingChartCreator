@@ -1,23 +1,19 @@
+#/usr/bin/env python
+
+"""
+Produces an optimal seating chart using the simulated annealing algorithm.
+Run by cd'ing to outer directory, then running:
+python -m seating.main seating/people.csv seating/tables.csv
+"""
 from copy import deepcopy
-import math
 import argparse
 
-import config
-from seating_io import InputData, write_tables_to_csv, write_people_to_csv
-from build import build_guess
-from anneal import anneal
-from display_messages import print_settings, print_init_cost, print_progress, print_final_metrics
-from solution import Solution
-
-def check_negative(value):
-    try:
-        ivalue = int(value)
-    except ValueError:
-        raise argparse.ArgumentTypeError("'%s' is not a positive integer" % value)
-    if ivalue < 0:
-         raise argparse.ArgumentTypeError("%s is not a positive integer" % value)
-    return ivalue
-
+from seating import config
+from seating.seating_io import InputData, write_tables_to_csv, write_people_to_csv
+from seating.build import build_guess
+from seating.anneal import anneal
+from seating.display_messages import print_init_cost, \
+    print_progress, print_final_metrics
 def create_parser():
     parser = argparse.ArgumentParser(description="Run the Seating Chart Creator command-line app")
     parser.add_argument("people_file", action="store")
@@ -25,23 +21,25 @@ def create_parser():
     parser.add_argument("-p", "--output_people_filename", default='output-people.csv', action="store")
     parser.add_argument("-t", "--output_tables_filename", default='output-tables.csv', action="store")
     return parser
-
 def cost_of_random_solutions(people_in, tables_in, days):
+    """
+    Computes the average cost of 100 random solutions
+    """
     config.build_smart = False
     costs = 0
-    for _ in range(50):
+    for _ in range(100):
         people = deepcopy(people_in)
         tables = deepcopy(tables_in)
         solution = build_guess(people, tables, days)
         costs += solution.cost
-    avg_cost = costs/50.0
+    avg_cost = costs/100.0
     config.build_smart = True
     return avg_cost
 
 class DummySolution(object):
     """
     For delivering baseline cost information to Tk GUI.
-    Needs to be structured this way to match 2nd 'yield' 
+    Needs to be structured this way to match 2nd 'yield'
     statement in main() - Tk expects the information in this
     format.
     """

@@ -1,18 +1,26 @@
 import collections
-import heapq
 import random
 
-import config
-from solution import Solution
+from . import config
+from .solution import Solution
 
 def get_previous_seatmates(person, tables):
+    """
+    Returns a list of the ID #s of those who have previously sat with
+    the person of interest.
+    """
     ids_of_previous_seatmates = []
     for table in tables:
         if person in table.people:
-            ids_of_previous_seatmates.extend([p.id for p in table.people if p.id != person.id])
+            ids_of_previous_seatmates.extend([p.id for p in table.people
+                                              if p.id != person.id])
     return ids_of_previous_seatmates
 
 def ordered_by_num_seatmates(tables, ids_of_previous_seatmates):
+    """
+    Returns a list of tables, sorted by how many people at each table
+    have previously sat with the person of interest
+    """
     h = []
     for table in tables:
         ids_at_table = [person.id for person in table.people]
@@ -24,24 +32,39 @@ def ordered_by_num_seatmates(tables, ids_of_previous_seatmates):
     return tables_out
 
 def room_for_cat(tables, category):
+    """
+    Returns a list of tables that are not 'maxed out' for a particular
+    category. Defaults to the input list of tables if all are full.
+    """
     open_tables = [t for t in tables if not t.is_full_for_cat(category)]
     if open_tables != []:
         return open_tables
     else:
         return tables
 
-def small_tables(tables, open_tables, day):        
-    average = sum([len(t.people) for t in tables if t.day == day and t.name != 'Head'])/len([t for t in tables if t.day == day and t.name != 'Head'])
+def small_tables(tables, open_tables, day):
+    """
+    Returns a list of tables with significantly fewer people at them than
+    other tabls.
+    """
+    average = sum(
+        [len(t.people) for t in tables if t.day == day and t.name != 'Head'])\
+        /len([t for t in tables if t.day == day and t.name != 'Head'])
     open_tables2 = [t for t in open_tables if len(t.people) < average-2]
     if open_tables2 != []:
         return open_tables2
     return open_tables
 
 def not_sat_at_twice(open_tables, person):
+    """
+    Returns a list of tables the person has sat at fewer than two times.
+    """
     counts = collections.Counter(person.tables.values())
     if counts != {}:
-        bad_names = [table_name for (table_name, count) in counts.items() if count > 1
-                     and table_name != 'Head' and table_name != '']
+        bad_names = [table_name for (table_name, count) in counts.items()
+                     if count > 1
+                     and table_name != 'Head'
+                     and table_name != '']
         good_tables = [t for t in open_tables if t.name not in bad_names]
         if good_tables != []:
             return good_tables
@@ -49,17 +72,20 @@ def not_sat_at_twice(open_tables, person):
 
 def best_table(person, tables, day):
     if config.build_smart == False:
-        return random.choice([t for t in tables if t.day == day and t.name != 'Head' and not t.is_full()])
+        return random.choice(
+            [t for t in tables if t.day == day
+             and t.name != 'Head' and not t.is_full()])
 
-    open_tables = [t for t in tables 
-                   if t.day == day 
-                   and t.name != 'Head' 
+    open_tables = [t for t in tables
+                   if t.day == day
+                   and t.name != 'Head'
                    and not t.is_full()]
     open_tables = small_tables(tables, open_tables, day)
     open_tables = room_for_cat(open_tables, person.category)
     open_tables = not_sat_at_twice(open_tables, person)
     ids_of_previous_seatmates = get_previous_seatmates(person, tables)
-    open_tables = ordered_by_num_seatmates(open_tables, ids_of_previous_seatmates)
+    open_tables = ordered_by_num_seatmates(open_tables,
+                                           ids_of_previous_seatmates)
     best_table = open_tables[0]
     return best_table
 
@@ -80,12 +106,14 @@ def populate_preassigned_tables(people, tables, days):
         for day in days:
             table_name = person.tables[day]
             if table_name != '':
-                try: 
+                try:
                     preassigned_table = [t for t in tables \
-                                         if t.name == table_name 
+                                         if t.name == table_name
                                          and t.day == day][0]
                 except IndexError:
-                    print '%s %s was pre-assigned to table ' % (person.first_name, person.last_name) + \
+                    f = person.first_name
+                    l = person.last_name
+                    print '%s %s was pre-assigned to table ' % (f, l) + \
                     '%s, which is not in the tables input file.' % table_name
                     raise
                 preassigned_table.people.append(person)
