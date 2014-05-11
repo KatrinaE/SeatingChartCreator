@@ -26,9 +26,39 @@ def create_parser():
     parser.add_argument("-t", "--output_tables_filename", default='output-tables.csv', action="store")
     return parser
 
+def cost_of_random_solutions(people_in, tables_in, days):
+    config.build_smart = False
+    costs = 0
+    for _ in range(50):
+        people = deepcopy(people_in)
+        tables = deepcopy(tables_in)
+        solution = build_guess(people, tables, days)
+        costs += solution.cost
+    avg_cost = costs/50.0
+    config.build_smart = True
+    return avg_cost
+
+class DummySolution(object):
+    """
+    For delivering baseline cost information to Tk GUI.
+    Needs to be structured this way to match 2nd 'yield' 
+    statement in main() - Tk expects the information in this
+    format.
+    """
+    def __init__(self, baseline_cost):
+        self.cost = "Baseline cost"
+        self.baseline_cost = baseline_cost
+        self.dummy_T = 1.0
+
 def main(input_data):
     people = deepcopy(input_data.people)
     tables = deepcopy(input_data.tables)
+
+    # for initializing axes of graph
+    baseline_cost = cost_of_random_solutions(people, tables, input_data.days)
+    dummy_solution = DummySolution(baseline_cost)
+    yield (dummy_solution, dummy_solution.dummy_T)
+
     init_solution = build_guess(people, tables, input_data.days)
     best_solution = deepcopy(init_solution)
     print_init_cost(init_solution.cost)
@@ -48,7 +78,10 @@ if __name__ == '__main__':
 
     if not config.test_cost:
         for (best_solution, T) in main(input_data):
-            print_progress(best_solution, T)
+            if best_solution.cost == 'Baseline cost':
+                print 'Average cost of random solutions: ' + str(best_solution.baseline_cost)
+            else:
+                print_progress(best_solution, T)
 
         print_final_metrics(best_solution)
         write_people_to_csv(best_solution, args.output_people_filename)

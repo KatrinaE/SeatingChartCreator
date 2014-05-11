@@ -6,8 +6,8 @@ def print_settings():
         print "config.greedy_start = " + str(config.greedy)
 
 def print_init_cost(cost):
-    if config.verbose:
-        print "Best init cost " + str(cost)
+    if config.display_progress:
+        print "Init cost " + str(cost)
 
 def print_acceptance(ap, r, new_cost, old_cost, status):
     if config.super_verbose:

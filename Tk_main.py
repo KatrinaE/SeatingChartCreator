@@ -263,7 +263,7 @@ class InputFrame(Frame):
         self.results_frame.same_spot2_var.set('__')
         self.results_frame.same_spot3_var.set('__')
 
-        self.plot_frame.rects = self.plot_frame.plot.barh((0), (43000), height=1, left=0, linewidth=0, color='white')
+        self.plot_frame.rects = self.plot_frame.plot.barh((0), (self.progress_frame.baseline_cost), height=1, left=0, linewidth=0, color='white')
         self.plot_frame.canvas.draw()
  
     def switch_to_output_mode(self):
@@ -366,13 +366,16 @@ class InputFrame(Frame):
             if msg == "Reset":
                 self.switch_to_input_mode()
             elif msg == "Task finished":
-                print msg
                 self.switch_to_output_mode()
+            elif msg[2] == 'Baseline cost':
+                self.progress_frame.baseline_cost = msg[0].baseline_cost
+                self.progress_frame.plot_frame.plot.set_xlim(0, self.progress_frame.baseline_cost)
+                self.parent.after(10, self.process_queue)
             else:
                 self.solution = msg[0]
                 iteration = msg[1]
                 cost = msg[2]
-                quality = 43000-cost # low cost = high quality
+                quality = self.progress_frame.baseline_cost - cost # low cost = high quality
                 self.progress_frame.num_tries_var.set(int(iteration))
                 self.plot_frame.rects = self.plot_frame.plot.barh((0), (quality), height=1, left=0, linewidth=0, color=self.plot_frame.color)
                 self.plot_frame.canvas.draw()
@@ -392,7 +395,6 @@ class InputFrame(Frame):
                 self.parent.after(10, self.process_queue)
         except Queue.Empty:
             self.parent.after(10, self.process_queue)
-
 
 class PlotFrame(Frame):
     def __init__(self, parent, title_text, axes_scale, color, y_left, y_right, width=500, height=200, background="white"):
@@ -674,10 +676,11 @@ class ProgressFrame(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
+        self.baseline_cost = None
         self.initialize()
 
     def initialize(self):
-        plot_axes = [0, 43000, 0, 1]
+        plot_axes = [0, self.baseline_cost, 0, 1]
         self.plot_frame = PlotFrame(self, "Quality of Solution", \
                                 plot_axes, "dodgerblue", "Poor", "Perfect")
         self.plot_frame.grid(row=0, column=0, sticky=(N))
@@ -729,6 +732,7 @@ class ThreadedBackendCall(threading.Thread):
                 self.queue.put((solution, iteration, solution.cost))
                 self.lock.release()
                 time.sleep(0.05)
+
         self.queue.put("Task finished")
 
     def stop(self):
@@ -738,11 +742,8 @@ def main():
 
     # helper method used when quitting program
     def kill_all_threads():
-        print 'foo'
         if input_frame.backend_call is not None:
-            print 'bar'
             input_frame.backend_call.stop()
-            print 'baz'
             input_frame.backend_call.join()
         root.destroy()
 
