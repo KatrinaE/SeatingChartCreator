@@ -10,8 +10,8 @@ import threading
 import Queue
 
 # Tkinter imports
-from Tkinter import Tk, Frame, PhotoImage, Label, Button, StringVar, Toplevel,\
-    LEFT, N, NW, SE, S, SW, SE, E, W
+from Tkinter import Tk, Frame, PhotoImage, Label, Canvas, Scrollbar, Button, \
+    Text, StringVar, Toplevel, INSERT, LEFT, N, NW, SE, S, SW, SE, E, W
 import tkMessageBox
 import tkFileDialog
 import ttk
@@ -25,6 +25,8 @@ import matplotlib.pyplot as plt
 import main as backend
 from seating import config
 from seating.seating_io import write_tables_to_csv, write_people_to_csv, InputData
+from seating.utils import find_data_file
+
 
 class ResultsFrame(Frame):
     def __init__(self, parent, plot_frame):
@@ -653,7 +655,7 @@ cell."""
         ptext3label = Label(innerwindowp, text=ptext3, justify=LEFT)
         ptext3label.grid(row=5, column=0, padx=20, sticky=(W))
 
-        self.picture2p = PhotoImage(file='static/people-example.gif')
+        self.picture2p = PhotoImage(file=find_data_file('static/people-example.gif'))
         self.picture_label2p = Label(self.window, image = self.picture2p)
         self.picture_label2p.grid(row=2, column=0)
 
@@ -704,7 +706,7 @@ the number of people to be seated!"""
         text3label = Label(innerwindow, text=text3, justify=LEFT)
         text3label.grid(row=5, column=0, padx=20, sticky=(W))
 
-        self.picture2 = PhotoImage(file='static/tables-example.gif')
+        self.picture2 = PhotoImage(file=find_data_file('static/tables-example.gif'))
         self.picture_label2 = Label(self.window2, image=self.picture2)
         self.picture_label2.grid(row=2, column=0)
 
@@ -714,7 +716,7 @@ class HeaderFrame(Frame):
         self.initialize()
 
     def initialize(self):
-        self.logo = PhotoImage(file='static/logo-small.gif')
+        self.logo = PhotoImage(file=find_data_file('static/logo-small.gif'))
         self.logo_label = Label(self)
         self.logo_label['image'] = self.logo
         self.logo_label.grid(row=0, column=0, padx=20, pady=(10, 0), sticky=(W))

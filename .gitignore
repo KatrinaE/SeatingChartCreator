@@ -1,6 +1,12 @@
 # Official recommended gitignore for Python projects
 # from https://github.com/github/gitignore/blob/master/Python.gitignore
 
+.gitignore
+people.csv
+people-win.csv
+tables.csv
+tables-win.csv
+static/Seating\ Chart\ Spec\ Update.txt
 Seating\ Chart\ Criteria.docx
 output.csv
 .ropeproject
@@ -9,6 +15,7 @@ colors.py
 *#*
 .DS_Store
 
+*~
 *.py[cod]
 
 # C extensions

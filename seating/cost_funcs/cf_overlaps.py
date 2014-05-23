@@ -35,7 +35,7 @@ def cost(freqs, group_size):
     cost = 0
     for freq, num_occurrences in freqs.iteritems():
         if freq != 1:
-            cost += (freq**3 * num_occurrences) * group_size**3
+            cost += (freq**4 * num_occurrences) * group_size**4
 
     if cost > 0 and config.verbose:
         print ''

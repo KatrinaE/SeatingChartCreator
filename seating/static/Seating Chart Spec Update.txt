@@ -1,0 +1,8 @@
+* 10 tables of 8 + 1 head table
+* 3-4 faculty pulled out each day + 3 people always there
+
+Windows 7
+
+
+* made progress bar better
+* allowed for min/max table sizes
